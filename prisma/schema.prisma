@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
@@ -10,4 +5,365 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+}
+
+// ENUMS
+enum UserRole {
+  USER
+  ADMIN
+  SUPERADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+enum AcademicLevel {
+  LEVEL_100
+  LEVEL_200
+  LEVEL_300
+  LEVEL_400
+  LEVEL_500
+  LEVEL_600
+}
+
+enum SchoolFeeStatus {
+  PAID
+  NOT_PAID
+}
+
+enum ApplicationStatus {
+  PENDING
+  ELIGIBLE
+  ALLOCATED
+  EXPIRED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  EXPIRED
+}
+
+enum HostelStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum RoomStatus {
+  AVAILABLE
+  FULL
+  MAINTENANCE
+}
+
+enum BedStatus {
+  AVAILABLE
+  OCCUPIED
+  RESERVED
+  MAINTENANCE
+}
+
+enum AllocationStatus {
+  ACTIVE
+  CANCELLED
+}
+
+enum CheckInStatus {
+  PENDING
+  COMPLETED
+  EXPIRED
+}
+
+enum IssueStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum TransactionType {
+  CREDIT
+  DEBIT
+}
+
+enum BankAccountType {
+  STUDENT
+  ADMIN
+}
+
+// USER
+model User {
+  id       String  @id @default(uuid())
+  email    String? @unique
+  password String?
+
+  firstName String
+  lastName  String
+
+  role   UserRole   @default(USER)
+  status UserStatus @default(ACTIVE)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  student        Student?
+  reportedIssues Issue[]      @relation("ReportedIssues")
+  resolvedIssues Issue[]      @relation("ResolvedIssues")
+  bankAccount    BankAccount?
+
+  @@index([role])
+  @@index([status])
+}
+
+// STUDENT
+model Student {
+  id String @id @default(uuid())
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  registrationNo String        @unique
+  academicLevel  AcademicLevel
+
+  schoolFeeRecord SchoolFeeRecord?
+
+  applications HostelApplication[]
+  allocations  Allocation[]
+  checkIns     CheckIn[]
+  issues       Issue[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([academicLevel])
+}
+
+// SIMULATED SCHOOL FEE RECORD
+model SchoolFeeRecord {
+  id String @id @default(uuid())
+
+  studentId String  @unique
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  rrr    String          @unique
+  status SchoolFeeStatus @default(NOT_PAID)
+
+  verifiedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// HOSTEL
+model Hostel {
+  id String @id @default(uuid())
+
+  name        String
+  description String?
+  status      HostelStatus @default(ACTIVE)
+
+  rooms Room[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ROOM
+model Room {
+  id String @id @default(uuid())
+
+  hostelId String
+  hostel   Hostel @relation(fields: [hostelId], references: [id], onDelete: Cascade)
+
+  roomNumber String
+  capacity   Int
+  status     RoomStatus @default(AVAILABLE)
+
+  beds Bed[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([hostelId, roomNumber])
+}
+
+// BED
+model Bed {
+  id String @id @default(uuid())
+
+  roomId String
+  room   Room   @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  bedNumber String
+  status    BedStatus @default(AVAILABLE)
+
+  allocations Allocation[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([roomId, bedNumber])
+}
+
+// HOSTEL APPLICATION
+model HostelApplication {
+  id String @id @default(uuid())
+
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  submittedAt DateTime @default(now())
+
+  status ApplicationStatus @default(PENDING)
+
+  paymentDeadline DateTime?
+
+  payment Payment?
+
+  allocation Allocation?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([studentId])
+  @@index([status])
+}
+
+// PAYMENT
+model Payment {
+  id String @id @default(uuid())
+
+  applicationId String            @unique
+  application   HostelApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  amount Decimal @db.Decimal(12, 2)
+
+  status PaymentStatus @default(PENDING)
+
+  paymentDeadline DateTime?
+  paidAt          DateTime?
+
+  transactionId String?      @unique
+  transaction   Transaction? @relation(fields: [transactionId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ALLOCATION
+model Allocation {
+  id String @id @default(uuid())
+
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  applicationId String            @unique
+  application   HostelApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  bedId String
+  bed   Bed    @relation(fields: [bedId], references: [id])
+
+  status AllocationStatus @default(ACTIVE)
+
+  allocatedAt DateTime  @default(now())
+  cancelledAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  checkIn   CheckIn?
+
+  @@index([studentId])
+  @@index([bedId])
+  @@index([status])
+}
+
+// CHECK-IN
+model CheckIn {
+  id String @id @default(uuid())
+
+  allocationId String     @unique
+  allocation   Allocation @relation(fields: [allocationId], references: [id], onDelete: Cascade)
+
+  code String @unique
+
+  status CheckInStatus @default(PENDING)
+
+  expiresAt DateTime
+  usedAt    DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  student   Student? @relation(fields: [studentId], references: [id])
+  studentId String?
+
+  @@index([code])
+  @@index([status])
+}
+
+// HOSTEL ISSUES
+model Issue {
+  id String @id @default(uuid())
+
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  reportedById String
+  reportedBy   User   @relation("ReportedIssues", fields: [reportedById], references: [id])
+
+  resolvedById String?
+  resolvedBy   User?   @relation("ResolvedIssues", fields: [resolvedById], references: [id])
+
+  title       String
+  description String
+
+  status IssueStatus @default(OPEN)
+
+  resolvedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([studentId])
+  @@index([status])
+}
+
+// BankAccount
+model BankAccount {
+  id String @id @default(uuid())
+
+  userId String? @unique
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  accountNumber String          @unique
+  type          BankAccountType @default(STUDENT)
+
+  balance Decimal @default(0) @db.Decimal(12, 2)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  transactions Transaction[]
+}
+
+//Transaction
+model Transaction {
+  id String @id @default(uuid())
+
+  bankAccountId String
+  bankAccount   BankAccount @relation(fields: [bankAccountId], references: [id], onDelete: Cascade)
+
+  reference String  @unique
+  amount    Decimal @db.Decimal(12, 2)
+
+  type        TransactionType
+  description String?
+
+  payment Payment?
+
+  createdAt DateTime @default(now())
+
+  @@index([bankAccountId])
 }
