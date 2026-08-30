@@ -1,16 +1,40 @@
 import express from "express";
 import cors from "cors";
+import { env } from "./config/env";
+
+import mainRoutes from "./routes";
+import { notFound } from "./middleware/not-found";
+import { errorHandler } from "./middleware/error-handler";
+import { sendSuccess } from "./middleware/response-formatter";
+
 
 const app = express();
 
-app.use(cors());
-app.use(express.json());
+// Global middleware
+app.use(
+  cors({
+    origin: env.corsOrigin,
+    credentials: true,
+  }),
+);
 
+app.use(express.json({ limit: "1mb" }));
+app.use(express.urlencoded({ extended: true }));
+app.disable("x-powered-by");
+
+
+// Health check
 app.get("/health", (_req, res) => {
-  res.status(200).json({
-    success: true,
-    message: "Hostel Management Backend is running",
+  return sendSuccess(res, {
+    message: "Hostel Management Backend is running.",
   });
 });
+
+// API routes
+app.use("/api", mainRoutes);
+
+// Error handling
+app.use(notFound);
+app.use(errorHandler);
 
 export default app;
