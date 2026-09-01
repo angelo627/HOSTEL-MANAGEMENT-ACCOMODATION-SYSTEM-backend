@@ -5,87 +5,100 @@ import jwt from "jsonwebtoken";
 
 import { AppError } from "../shared/errors/app-error";
 
+interface ErrorResponse {
+  success: false;
+  statusCode: number;
+  message: string;
+  data: null;
+  code: string;
+  details?: unknown;
+}
+
+function sendError(
+  res: Response,
+  statusCode: number,
+  message: string,
+  code: string,
+  details?: unknown,
+): void {
+  const response: ErrorResponse = {
+    success: false,
+    statusCode,
+    message,
+    data: null,
+    code,
+  };
+
+  if (details !== undefined) {
+    response.details = details;
+  }
+
+  res.status(statusCode).json(response);
+}
+
 export function errorHandler(
   error: unknown,
   _req: Request,
   res: Response,
   _next: NextFunction,
 ): void {
-  // 1. AppError
+  // 1. Operational application errors
   if (error instanceof AppError) {
-    res.status(error.statusCode).json({
-      status: "error",
-      message: error.message,
-      code: error.code,
-      ...(error.details !== undefined && {
-        details: error.details,
-      }),
-    });
+    sendError(res, error.statusCode, error.message, error.code, error.details);
 
     return;
   }
 
-  // 2. Zod validation error
+  // 2. Zod validation errors
   if (error instanceof ZodError) {
-    res.status(400).json({
-      status: "error",
-      message: "Validation failed.",
-      code: "VALIDATION_ERROR",
-      details: error.flatten(),
-    });
+    sendError(
+      res,
+      400,
+      "Validation failed.",
+      "VALIDATION_ERROR",
+      error.flatten(),
+    );
 
     return;
   }
 
-  // 3. Prisma known request error
-  if (error instanceof Prisma.PrismaClientKnownRequestError) {
-    res.status(400).json({
-      status: "error",
-      message: "Database operation failed.",
-      code: `DATABASE_${error.code}`,
-    });
-
-    return;
-  }
-
-  // 4. Prisma validation error
-  if (error instanceof Prisma.PrismaClientValidationError) {
-    res.status(400).json({
-      status: "error",
-      message: "Invalid database operation.",
-      code: "DATABASE_VALIDATION_ERROR",
-    });
-
-    return;
-  }
-
-  // 5. JWT errors
-  if (error instanceof jwt.JsonWebTokenError) {
-    res.status(401).json({
-      status: "error",
-      message: "Invalid authentication token.",
-      code: "INVALID_TOKEN",
-    });
-
-    return;
-  }
-
+  // 3. JWT expired token
+  // TokenExpiredError extends JsonWebTokenError,
+  // so this must come before JsonWebTokenError.
   if (error instanceof jwt.TokenExpiredError) {
-    res.status(401).json({
-      status: "error",
-      message: "Authentication token has expired.",
-      code: "TOKEN_EXPIRED",
-    });
+    sendError(res, 401, "Authentication token has expired.", "TOKEN_EXPIRED");
 
     return;
   }
 
-  // 6. Unknown / unexpected error
+  // 4. Invalid JWT
+  if (error instanceof jwt.JsonWebTokenError) {
+    sendError(res, 401, "Invalid authentication token.", "INVALID_TOKEN");
+
+    return;
+  }
+
+  // 5. Prisma known request errors
+  if (error instanceof Prisma.PrismaClientKnownRequestError) {
+    sendError(res, 400, "Database operation failed.", `DATABASE_${error.code}`);
+
+    return;
+  }
+
+  // 6. Prisma validation errors
+  if (error instanceof Prisma.PrismaClientValidationError) {
+    sendError(
+      res,
+      400,
+      "Invalid database operation.",
+      "DATABASE_VALIDATION_ERROR",
+    );
+
+    return;
+  }
+
+  // 7. Unknown errors
   console.error(error);
 
-  res.status(500).json({
-    status: "error",
-    message: "An unexpected error occurred.",
-    code: "INTERNAL_SERVER_ERROR",
-  });
+  sendError(res, 500, "An unexpected error occurred.", "INTERNAL_SERVER_ERROR");
 }

@@ -148,7 +148,7 @@ model SchoolFeeRecord {
   studentId String  @unique
   student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
-  rrr    String          @unique
+  rrr    String?          @unique
   status SchoolFeeStatus @default(NOT_PAID)
 
   verifiedAt DateTime?
