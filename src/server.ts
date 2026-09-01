@@ -15,32 +15,47 @@ async function startServer() {
       console.log(`Server running on port ${PORT}`);
     });
 
-    // Graceful shutdown
+    let isShuttingDown = false;
+
     const shutdown = async (signal: string) => {
+      if (isShuttingDown) {
+        return;
+      }
+
+      isShuttingDown = true;
+
       console.log(`${signal} received. Shutting down server...`);
 
-      server.close(async () => {
+      server.close(async (serverError) => {
+        if (serverError) {
+          console.error("Error closing server:", serverError);
+        }
+
         try {
           await prisma.$disconnect();
 
           console.log("Database disconnected");
           console.log("Server shut down successfully");
 
-          process.exit(0);
+          process.exit(serverError ? 1 : 0);
         } catch (error) {
-          console.error("Error during shutdown:", error);
+          console.error("Error disconnecting database:", error);
           process.exit(1);
         }
       });
     };
 
-    process.on("SIGINT", () => shutdown("SIGINT"));
-    process.on("SIGTERM", () => shutdown("SIGTERM"));
+    process.on("SIGINT", () => {
+      void shutdown("SIGINT");
+    });
 
-    // Handle server errors
+    process.on("SIGTERM", () => {
+      void shutdown("SIGTERM");
+    });
+
     server.on("error", (error) => {
       console.error("Server error:", error);
-      process.exit(1);
+      void shutdown("SERVER_ERROR");
     });
   } catch (error) {
     console.error("Failed to start server:", error);
@@ -51,4 +66,4 @@ async function startServer() {
   }
 }
 
-startServer();
+void startServer();
