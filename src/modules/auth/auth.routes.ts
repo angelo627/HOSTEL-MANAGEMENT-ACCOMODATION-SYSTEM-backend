@@ -1,8 +1,8 @@
 import { Router } from "express";
 
-import { registerController } from "./auth.controller";
+import { authController } from "./auth.controller";
 
-import { registerSchema } from "./auth.validation";
+import { registerSchema, studentLoginSchema } from "./auth.validation";
 
 import { validateRequest } from "../../shared/validation/validate-request";
 
@@ -11,8 +11,13 @@ const authRouter = Router();
 authRouter.post(
   "/register",
   validateRequest(registerSchema),
-  registerController,
+  authController.register,
 );
 
+authRouter.post(
+  "/login",
+  validateRequest(studentLoginSchema),
+  authController.studentLogin,
+);
 
 export { authRouter };

@@ -24,3 +24,15 @@ export const registerSchema = z.object({
     .min(8, "Password must be at least 8 characters.")
     .max(128, "Password must not exceed 128 characters."),
 });
+
+export const studentLoginSchema = z.object({
+  registrationNo: z
+    .string()
+    .trim()
+    .regex(/^(202[2-7])\/\d{6}$/, "Invalid registration number format."),
+
+  rrr: z
+    .string()
+    .trim()
+    .regex(/^RRR-(202[2-7])-\d{6}$/, "Invalid RRR format."),
+});

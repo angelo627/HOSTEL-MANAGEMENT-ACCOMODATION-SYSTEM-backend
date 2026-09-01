@@ -1,38 +1,50 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 
-import { register } from "./auth.service";
+import { authService } from "./auth.service";
 
-import { sendCreated } from "../../middleware/response-formatter";
+import { asyncHandler } from "../../shared/utils/async-handler";
 
-export async function registerController(
-  req: Request,
-  res: Response,
-  _next: NextFunction,
-): Promise<Response> {
-  const result = await register(req.body);
+import { sendCreated, sendSuccess } from "../../middleware/response-formatter";
 
-  const { user, student, schoolFeeRecord } = result;
+export const authController = {
+  register: asyncHandler(async (req: Request, res: Response) => {
+    const result = await authService.register(req.body);
 
-  return sendCreated(res, "Student account created successfully.", {
-    user: {
-      id: user.id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      role: user.role,
-      status: user.status,
-    },
+    const { user, student, schoolFeeRecord } = result;
 
-    student: {
-      id: student.id,
-      registrationNo: student.registrationNo,
-      academicLevel: student.academicLevel,
-    },
+    sendCreated(res, "Student account created successfully.", {
+      user: {
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+        status: user.status,
+      },
 
-    schoolFeeRecord: {
-      rrr: schoolFeeRecord.rrr,
-      status: schoolFeeRecord.status,
-      verifiedAt: schoolFeeRecord.verifiedAt,
-    },
-  });
-}
+      student: {
+        id: student.id,
+        registrationNo: student.registrationNo,
+        academicLevel: student.academicLevel,
+      },
+
+      schoolFeeRecord: {
+        rrr: schoolFeeRecord.rrr,
+        status: schoolFeeRecord.status,
+        verifiedAt: schoolFeeRecord.verifiedAt,
+      },
+    });
+  }),
+
+  studentLogin: asyncHandler(async (req: Request, res: Response) => {
+    const { registrationNo, rrr } = req.body;
+
+    const result = await authService.studentLogin(registrationNo, rrr);
+
+    sendSuccess(res, {
+      statusCode: 200,
+      message: "Student login successful.",
+      data: result,
+    });
+  }),
+};
