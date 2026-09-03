@@ -2,7 +2,11 @@ import { Router } from "express";
 
 import { authController } from "./auth.controller";
 
-import { registerSchema, studentLoginSchema } from "./auth.validation";
+import {
+  registerSchema,
+  studentLoginSchema,
+  adminLoginSchema,
+} from "./auth.validation";
 
 import { validateRequest } from "../../shared/validation/validate-request";
 
@@ -18,6 +22,12 @@ authRouter.post(
   "/login",
   validateRequest(studentLoginSchema),
   authController.studentLogin,
+);
+
+authRouter.post(
+  "/admin/login",
+  validateRequest(adminLoginSchema),
+  authController.adminLogin,
 );
 
 export { authRouter };

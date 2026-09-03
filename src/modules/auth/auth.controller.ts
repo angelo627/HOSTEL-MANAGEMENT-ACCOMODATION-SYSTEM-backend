@@ -47,4 +47,16 @@ export const authController = {
       data: result,
     });
   }),
+
+  adminLogin: asyncHandler(async (req: Request, res: Response) => {
+    const { email, password } = req.body;
+
+    const result = await authService.adminLogin(email, password);
+
+    sendSuccess(res, {
+      statusCode: 200,
+      message: "Admin login successful.",
+      data: result,
+    });
+  }),
 };

@@ -2,7 +2,7 @@ import { Prisma } from "../../generated/prisma/client";
 
 import prisma from "../../config/prisma-client";
 
-import { hashPassword } from "../../shared/utils/crypto";
+import { hashPassword, comparePassword } from "../../shared/utils/crypto";
 import { signToken } from "../../shared/utils/token";
 
 import { AppError } from "../../shared/errors/app-error";
@@ -131,7 +131,6 @@ export const authService = {
     });
   },
 
-  
   async studentLogin(registrationNo: string, rrr: string) {
     const student = await prisma.student.findUnique({
       where: {
@@ -206,6 +205,74 @@ export const authService = {
         registrationNo: student.registrationNo,
         academicLevel: student.academicLevel,
         rrr: schoolFeeRecord.rrr,
+      },
+    };
+  },
+
+  async adminLogin(email: string, password: string) {
+    const user = await prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    if (!user) {
+      throw new AppError({
+        statusCode: 401,
+        message: "Invalid email or password.",
+        code: "INVALID_CREDENTIALS",
+      });
+    }
+
+    if (user.role !== "ADMIN" && user.role !== "SUPERADMIN") {
+      throw new AppError({
+        statusCode: 403,
+        message: "You are not authorized to access the admin portal.",
+        code: "ADMIN_ACCESS_DENIED",
+      });
+    }
+
+    if (!user.password) {
+      throw new AppError({
+        statusCode: 401,
+        message: "Invalid email or password.",
+        code: "INVALID_CREDENTIALS",
+      });
+    }
+
+    const passwordIsValid = await comparePassword(password, user.password);
+
+    if (!passwordIsValid) {
+      throw new AppError({
+        statusCode: 401,
+        message: "Invalid email or password.",
+        code: "INVALID_CREDENTIALS",
+      });
+    }
+
+    if (user.status !== "ACTIVE") {
+      throw new AppError({
+        statusCode: 403,
+        message: "Your account is not active.",
+        code: "ACCOUNT_NOT_ACTIVE",
+      });
+    }
+
+    const token = signToken({
+      sub: user.id,
+      role: user.role,
+      status: user.status,
+    });
+
+    return {
+      token,
+      user: {
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+        status: user.status,
       },
     };
   },
