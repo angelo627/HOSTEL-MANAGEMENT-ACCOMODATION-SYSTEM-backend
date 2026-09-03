@@ -94,6 +94,12 @@ enum BankAccountType {
   ADMIN
 }
 
+// GENDER
+enum Gender {
+  MALE
+  FEMALE
+}
+
 // USER
 model User {
   id       String  @id @default(uuid())
@@ -127,6 +133,7 @@ model Student {
 
   registrationNo String        @unique
   academicLevel  AcademicLevel
+  gender         Gender?
 
   schoolFeeRecord SchoolFeeRecord?
 
@@ -163,6 +170,9 @@ model Hostel {
 
   name        String
   description String?
+  imageUrl    String?
+  imagePublicId String?
+  gender        Gender
   status      HostelStatus @default(ACTIVE)
 
   rooms Room[]
