@@ -59,4 +59,14 @@ export const authController = {
       data: result,
     });
   }),
+
+  getProfile: asyncHandler(async (req: Request, res: Response) => {
+    const result = await authService.getProfile(req.user!.id);
+
+    sendSuccess(res, {
+      statusCode: 200,
+      message: "Profile retrieved successfully.",
+      data: result,
+    });
+  }),
 };

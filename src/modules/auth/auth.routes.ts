@@ -1,6 +1,7 @@
 import { Router } from "express";
 
 import { authController } from "./auth.controller";
+import { authenticate } from "../../middleware/auth.middleware";
 
 import {
   registerSchema,
@@ -28,6 +29,12 @@ authRouter.post(
   "/admin/login",
   validateRequest(adminLoginSchema),
   authController.adminLogin,
+);
+
+authRouter.get(
+  "/profile",
+  authenticate,
+  authController.getProfile,
 );
 
 export { authRouter };

@@ -276,4 +276,54 @@ export const authService = {
       },
     };
   },
+
+  async getProfile(userId: string) {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+      include: {
+        student: {
+          include: {
+            schoolFeeRecord: true,
+          },
+        },
+      },
+    });
+
+    if (!user) {
+      throw new AppError({
+        statusCode: 404,
+        message: "User not found.",
+        code: "USER_NOT_FOUND",
+      });
+    }
+
+    return {
+      user: {
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+        status: user.status,
+      },
+
+      student: user.student
+        ? {
+            id: user.student.id,
+            registrationNo: user.student.registrationNo,
+            academicLevel: user.student.academicLevel,
+          }
+        : null,
+
+      schoolFeeRecord: user.student?.schoolFeeRecord
+        ? {
+            rrr: user.student.schoolFeeRecord.rrr,
+            status: user.student.schoolFeeRecord.status,
+            verifiedAt: user.student.schoolFeeRecord.verifiedAt,
+          }
+        : null,
+    };
+  },
 };
