@@ -3,7 +3,7 @@ import { AppError } from "../../shared/errors/app-error";
 import { uploadImage } from "../../shared/utils/upload-image";
 
 export const hostelService = {
-  // HOSTEL
+  // Create a new hostel and upload its image to Cloudinary.
   async createHostel(
     name: string,
     description: string | undefined,
@@ -40,5 +40,16 @@ export const hostelService = {
     });
 
     return hostel;
+  },
+
+  // Retrieve all hostels, showing the most recently created hostel first.
+  async getHostels() {
+    const hostels = await prisma.hostel.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    return hostels;
   },
 };

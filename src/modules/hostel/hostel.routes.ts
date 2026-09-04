@@ -16,4 +16,10 @@ hostelRouter.post(
   hostelController.createHostel,
 );
 
+// Retrieve all hostels.
+hostelRouter.get(
+  "/get-all-hostel",
+  hostelController.getHostels,
+);
+
 export { hostelRouter };
