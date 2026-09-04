@@ -6,6 +6,8 @@ import mainRoutes from "./routes";
 import { notFound } from "./middleware/not-found";
 import { errorHandler } from "./middleware/error-handler";
 import { sendSuccess } from "./middleware/response-formatter";
+import swaggerUi from "swagger-ui-express";
+import { swaggerSpec } from "./config/swagger";
 
 
 const app = express();
@@ -29,6 +31,9 @@ app.get("/health", (_req, res) => {
     message: "Hostel Management Backend is running.",
   });
 });
+
+// Expose the interactive API documentation at /api-docs.
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // API routes
 app.use("/api", mainRoutes);

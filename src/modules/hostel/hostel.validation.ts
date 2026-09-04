@@ -17,3 +17,22 @@ export const createHostelSchema = z.object({
   gender: z.enum(["MALE", "FEMALE"]),
 });
 
+// Validate fields that may be changed when updating a hostel.
+export const updateHostelSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(2, "Hostel name must be at least 2 characters.")
+    .max(100, "Hostel name must not exceed 100 characters.")
+    .optional(),
+
+  description: z
+    .string()
+    .trim()
+    .max(1000, "Description must not exceed 1000 characters.")
+    .optional(),
+
+  gender: z
+    .enum(["MALE", "FEMALE"])
+    .optional(),
+});
