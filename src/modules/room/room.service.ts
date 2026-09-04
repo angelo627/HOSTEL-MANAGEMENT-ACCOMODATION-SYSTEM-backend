@@ -46,4 +46,54 @@ export const roomService = {
 
     return room;
   },
+
+  // Retrieve all rooms and include the hostel they belong to.
+  async getRooms() {
+    const rooms = await prisma.room.findMany({
+      include: {
+        hostel: {
+          select: {
+            id: true,
+            name: true,
+            gender: true,
+            status: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    return rooms;
+  },
+
+  // Retrieve one room and include the hostel it belongs to.
+  async getRoomById(roomId: string) {
+    const room = await prisma.room.findUnique({
+      where: {
+        id: roomId,
+      },
+      include: {
+        hostel: {
+          select: {
+            id: true,
+            name: true,
+            gender: true,
+            status: true,
+          },
+        },
+      },
+    });
+
+    if (!room) {
+      throw new AppError({
+        statusCode: 404,
+        message: "Room not found.",
+        code: "ROOM_NOT_FOUND",
+      });
+    }
+
+    return room;
+  },
 };

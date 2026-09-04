@@ -60,7 +60,8 @@ export const allApis = [
       path: "/api/auth/login",
       method: "post",
       summary: "Log in a student",
-      description: "Authenticates a student using their registration number and RRR.",
+      description:
+        "Authenticates a student using their registration number and RRR.",
       tags: ["Auth"],
       requestBody: {
         required: true,
@@ -205,7 +206,8 @@ export const allApis = [
       path: "/api/admin/update-hostel/{hostelId}",
       method: "patch",
       summary: "Update a hostel",
-      description: "Updates any supplied hostel fields and optionally replaces its image.",
+      description:
+        "Updates any supplied hostel fields and optionally replaces its image.",
       tags: ["Hostel"],
       security: [{ bearerAuth: [] }],
       parameters: [
@@ -326,6 +328,8 @@ export const allApis = [
       path: "/api/admin/create-room",
       method: "post",
       summary: "Create a room",
+      description:
+        "Creates a room under an existing hostel using the supplied room number and capacity.",
       tags: ["Room"],
       security: [{ bearerAuth: [] }],
       requestBody: {
@@ -336,21 +340,492 @@ export const allApis = [
               type: "object",
               required: ["hostelId", "roomNumber", "capacity"],
               properties: {
-                hostelId: { type: "string", minLength: 1 },
-                roomNumber: { type: "string", minLength: 1, maxLength: 20 },
-                capacity: { type: "integer", minimum: 1 },
+                hostelId: {
+                  type: "string",
+                  minLength: 1,
+                  example: "001552a0-092e-46c2-bee7-99bd71119f12",
+                },
+                roomNumber: {
+                  type: "string",
+                  minLength: 1,
+                  maxLength: 20,
+                  example: "A01",
+                },
+                capacity: {
+                  type: "integer",
+                  minimum: 1,
+                  example: 4,
+                },
               },
             },
           },
         },
       },
       responses: {
-        "201": { $ref: "#/components/responses/Success" },
+        "201": {
+          description: "Room created successfully.",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: true,
+                  },
+                  statusCode: {
+                    type: "integer",
+                    example: 201,
+                  },
+                  message: {
+                    type: "string",
+                    example: "Room created successfully.",
+                  },
+                  data: {
+                    type: "object",
+                    properties: {
+                      id: {
+                        type: "string",
+                        format: "uuid",
+                      },
+                      hostelId: {
+                        type: "string",
+                        format: "uuid",
+                      },
+                      roomNumber: {
+                        type: "string",
+                        example: "A01",
+                      },
+                      capacity: {
+                        type: "integer",
+                        example: 4,
+                      },
+                      status: {
+                        type: "string",
+                        example: "AVAILABLE",
+                      },
+                      createdAt: {
+                        type: "string",
+                        format: "date-time",
+                      },
+                      updatedAt: {
+                        type: "string",
+                        format: "date-time",
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
         "400": { $ref: "#/components/responses/ValidationError" },
         "401": { $ref: "#/components/responses/Error" },
         "403": { $ref: "#/components/responses/Error" },
         "404": { $ref: "#/components/responses/Error" },
         "409": { $ref: "#/components/responses/Error" },
+      },
+    },
+
+    {
+      path: "/api/admin/room/get-all-room",
+      method: "get",
+      summary: "Get all rooms",
+      description:
+        "Returns all rooms with the hostel information associated with each room.",
+      tags: ["Room"],
+      security: [{ bearerAuth: [] }],
+      responses: {
+        "200": {
+          description: "Rooms retrieved successfully.",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: true,
+                  },
+                  statusCode: {
+                    type: "integer",
+                    example: 200,
+                  },
+                  message: {
+                    type: "string",
+                    example: "Rooms retrieved successfully.",
+                  },
+                  data: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        id: {
+                          type: "string",
+                          format: "uuid",
+                        },
+                        hostelId: {
+                          type: "string",
+                          format: "uuid",
+                        },
+                        roomNumber: {
+                          type: "string",
+                          example: "A01",
+                        },
+                        capacity: {
+                          type: "integer",
+                          example: 4,
+                        },
+                        status: {
+                          type: "string",
+                          example: "AVAILABLE",
+                        },
+                        createdAt: {
+                          type: "string",
+                          format: "date-time",
+                        },
+                        updatedAt: {
+                          type: "string",
+                          format: "date-time",
+                        },
+                        hostel: {
+                          type: "object",
+                          properties: {
+                            id: {
+                              type: "string",
+                              format: "uuid",
+                            },
+                            name: {
+                              type: "string",
+                              example: "Hall abu",
+                            },
+                            gender: {
+                              type: "string",
+                              enum: ["MALE", "FEMALE"],
+                              example: "MALE",
+                            },
+                            status: {
+                              type: "string",
+                              example: "INACTIVE",
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        "401": { $ref: "#/components/responses/Error" },
+        "403": { $ref: "#/components/responses/Error" },
+      },
+    },
+
+    {
+      path: "/api/admin/room/{roomId}",
+      method: "get",
+      summary: "Get a room by ID",
+      description:
+        "Returns a specific room and the hostel information associated with it.",
+      tags: ["Room"],
+      security: [{ bearerAuth: [] }],
+      parameters: [
+        {
+          name: "roomId",
+          in: "path",
+          required: true,
+          schema: {
+            type: "string",
+            format: "uuid",
+          },
+        },
+      ],
+      responses: {
+        "200": {
+          description: "Room retrieved successfully.",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: true,
+                  },
+                  statusCode: {
+                    type: "integer",
+                    example: 200,
+                  },
+                  message: {
+                    type: "string",
+                    example: "Room retrieved successfully.",
+                  },
+                  data: {
+                    type: "object",
+                    properties: {
+                      id: {
+                        type: "string",
+                        format: "uuid",
+                      },
+                      hostelId: {
+                        type: "string",
+                        format: "uuid",
+                      },
+                      roomNumber: {
+                        type: "string",
+                        example: "A01",
+                      },
+                      capacity: {
+                        type: "integer",
+                        example: 4,
+                      },
+                      status: {
+                        type: "string",
+                        example: "AVAILABLE",
+                      },
+                      createdAt: {
+                        type: "string",
+                        format: "date-time",
+                      },
+                      updatedAt: {
+                        type: "string",
+                        format: "date-time",
+                      },
+                      hostel: {
+                        type: "object",
+                        properties: {
+                          id: {
+                            type: "string",
+                            format: "uuid",
+                          },
+                          name: {
+                            type: "string",
+                            example: "Hall abu",
+                          },
+                          gender: {
+                            type: "string",
+                            enum: ["MALE", "FEMALE"],
+                            example: "MALE",
+                          },
+                          status: {
+                            type: "string",
+                            example: "INACTIVE",
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        "401": { $ref: "#/components/responses/Error" },
+        "403": { $ref: "#/components/responses/Error" },
+        "404": { $ref: "#/components/responses/Error" },
+      },
+    },
+
+    {
+      path: "/api/user/room/get-all-room",
+      method: "get",
+      summary: "Get all rooms",
+      description:
+        "Returns all rooms with the hostel information associated with each room for an authenticated user.",
+      tags: ["Room"],
+      security: [{ bearerAuth: [] }],
+      responses: {
+        "200": {
+          description: "Rooms retrieved successfully.",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: true,
+                  },
+                  statusCode: {
+                    type: "integer",
+                    example: 200,
+                  },
+                  message: {
+                    type: "string",
+                    example: "Rooms retrieved successfully.",
+                  },
+                  data: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        id: {
+                          type: "string",
+                          format: "uuid",
+                        },
+                        hostelId: {
+                          type: "string",
+                          format: "uuid",
+                        },
+                        roomNumber: {
+                          type: "string",
+                          example: "A01",
+                        },
+                        capacity: {
+                          type: "integer",
+                          example: 4,
+                        },
+                        status: {
+                          type: "string",
+                          example: "AVAILABLE",
+                        },
+                        createdAt: {
+                          type: "string",
+                          format: "date-time",
+                        },
+                        updatedAt: {
+                          type: "string",
+                          format: "date-time",
+                        },
+                        hostel: {
+                          type: "object",
+                          properties: {
+                            id: {
+                              type: "string",
+                              format: "uuid",
+                            },
+                            name: {
+                              type: "string",
+                              example: "Hall abu",
+                            },
+                            gender: {
+                              type: "string",
+                              enum: ["MALE", "FEMALE"],
+                              example: "MALE",
+                            },
+                            status: {
+                              type: "string",
+                              example: "INACTIVE",
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        "401": { $ref: "#/components/responses/Error" },
+        "403": { $ref: "#/components/responses/Error" },
+      },
+    },
+
+    {
+      path: "/api/user/room/{roomId}",
+      method: "get",
+      summary: "Get a room by ID",
+      description:
+        "Returns a specific room and the hostel information associated with it for an authenticated user.",
+      tags: ["Room"],
+      security: [{ bearerAuth: [] }],
+      parameters: [
+        {
+          name: "roomId",
+          in: "path",
+          required: true,
+          schema: {
+            type: "string",
+            format: "uuid",
+          },
+        },
+      ],
+      responses: {
+        "200": {
+          description: "Room retrieved successfully.",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: true,
+                  },
+                  statusCode: {
+                    type: "integer",
+                    example: 200,
+                  },
+                  message: {
+                    type: "string",
+                    example: "Room retrieved successfully.",
+                  },
+                  data: {
+                    type: "object",
+                    properties: {
+                      id: {
+                        type: "string",
+                        format: "uuid",
+                      },
+                      hostelId: {
+                        type: "string",
+                        format: "uuid",
+                      },
+                      roomNumber: {
+                        type: "string",
+                        example: "A01",
+                      },
+                      capacity: {
+                        type: "integer",
+                        example: 4,
+                      },
+                      status: {
+                        type: "string",
+                        example: "AVAILABLE",
+                      },
+                      createdAt: {
+                        type: "string",
+                        format: "date-time",
+                      },
+                      updatedAt: {
+                        type: "string",
+                        format: "date-time",
+                      },
+                      hostel: {
+                        type: "object",
+                        properties: {
+                          id: {
+                            type: "string",
+                            format: "uuid",
+                          },
+                          name: {
+                            type: "string",
+                            example: "Hall abu",
+                          },
+                          gender: {
+                            type: "string",
+                            enum: ["MALE", "FEMALE"],
+                            example: "MALE",
+                          },
+                          status: {
+                            type: "string",
+                            example: "INACTIVE",
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        "401": { $ref: "#/components/responses/Error" },
+        "403": { $ref: "#/components/responses/Error" },
+        "404": { $ref: "#/components/responses/Error" },
       },
     },
   ],
