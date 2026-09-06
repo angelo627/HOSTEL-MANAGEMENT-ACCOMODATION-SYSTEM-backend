@@ -1797,7 +1797,197 @@ export const allApis = [
     },
   ],
 
-  [],
+  {
+    path: "/api/user/student/profile",
+    method: "get",
+    summary: "Get student profile",
+    description:
+      "Retrieves the profile of the currently authenticated student, including personal information, academic level, gender, school fee details, and hostel allocation information when available.",
+    tags: ["Student"],
+    security: [{ bearerAuth: [] }],
+    responses: {
+      200: {
+        description: "Student profile retrieved successfully.",
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              properties: {
+                success: {
+                  type: "boolean",
+                  example: true,
+                },
+                statusCode: {
+                  type: "integer",
+                  example: 200,
+                },
+                message: {
+                  type: "string",
+                  example: "Student profile retrieved successfully.",
+                },
+                data: {
+                  type: "object",
+                  properties: {
+                    id: {
+                      type: "string",
+                      format: "uuid",
+                    },
+                    registrationNo: {
+                      type: "string",
+                      example: "2024/685993",
+                    },
+                    firstName: {
+                      type: "string",
+                      example: "Angelo",
+                    },
+                    lastName: {
+                      type: "string",
+                      example: "Flitz",
+                    },
+                    email: {
+                      type: "string",
+                      format: "email",
+                      example: "angelo@example.com",
+                    },
+                    academicLevel: {
+                      type: "string",
+                      enum: [
+                        "LEVEL_100",
+                        "LEVEL_200",
+                        "LEVEL_300",
+                        "LEVEL_400",
+                        "LEVEL_500",
+                        "LEVEL_600",
+                      ],
+                      example: "LEVEL_600",
+                    },
+                    gender: {
+                      type: "string",
+                      nullable: true,
+                      enum: ["MALE", "FEMALE"],
+                      example: "MALE",
+                    },
+                    schoolFee: {
+                      type: "object",
+                      nullable: true,
+                      properties: {
+                        status: {
+                          type: "string",
+                          enum: ["PAID", "NOT_PAID"],
+                          example: "PAID",
+                        },
+                        rrr: {
+                          type: "string",
+                          nullable: true,
+                          example: "RRR-2025-606986",
+                        },
+                      },
+                    },
+                    allocation: {
+                      type: "object",
+                      nullable: true,
+                      properties: {
+                        hostel: {
+                          type: "object",
+                          properties: {
+                            id: {
+                              type: "string",
+                              format: "uuid",
+                            },
+                            name: {
+                              type: "string",
+                              example: "Hall abu",
+                            },
+                            gender: {
+                              type: "string",
+                              enum: ["MALE", "FEMALE"],
+                              example: "MALE",
+                            },
+                            status: {
+                              type: "string",
+                              enum: ["ACTIVE", "INACTIVE"],
+                              example: "ACTIVE",
+                            },
+                          },
+                        },
+                        room: {
+                          type: "object",
+                          properties: {
+                            id: {
+                              type: "string",
+                              format: "uuid",
+                            },
+                            roomNumber: {
+                              type: "string",
+                              example: "A03",
+                            },
+                            capacity: {
+                              type: "integer",
+                              example: 4,
+                            },
+                          },
+                        },
+                        bed: {
+                          type: "object",
+                          properties: {
+                            id: {
+                              type: "string",
+                              format: "uuid",
+                            },
+                            bedNumber: {
+                              type: "string",
+                              example: "B2",
+                            },
+                            status: {
+                              type: "string",
+                              enum: [
+                                "AVAILABLE",
+                                "OCCUPIED",
+                                "RESERVED",
+                                "MAINTENANCE",
+                              ],
+                              example: "OCCUPIED",
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            example: {
+              success: true,
+              statusCode: 200,
+              message: "Student profile retrieved successfully.",
+              data: {
+                id: "e36c239c-c012-4a1f-90b7-b4e760f7b943",
+                registrationNo: "2024/685993",
+                firstName: "Angelo",
+                lastName: "Flitz",
+                email: "angelo@example.com",
+                academicLevel: "LEVEL_600",
+                gender: "MALE",
+                schoolFee: {
+                  status: "PAID",
+                  rrr: "RRR-2025-606986",
+                },
+                allocation: null,
+              },
+            },
+          },
+        },
+      },
+      401: {
+        description: "Authentication required or token is invalid/expired.",
+      },
+      404: {
+        description: "Student profile not found.",
+      },
+    },
+  },
+
+  
   [],
   [],
   [],
