@@ -828,6 +828,382 @@ export const allApis = [
         "404": { $ref: "#/components/responses/Error" },
       },
     },
+
+    {
+      method: "patch",
+      path: "/api/admin/room/update-room/{roomId}",
+      summary: "Update a room",
+      description:
+        "Updates the room number and/or capacity of an existing room. The room's hostel and status are not changed.",
+      tags: ["Room"],
+      security: [{ bearerAuth: [] }],
+
+      parameters: [
+        {
+          name: "roomId",
+          in: "path",
+          required: true,
+          schema: {
+            type: "string",
+            format: "uuid",
+          },
+          description: "The unique ID of the room to update.",
+        },
+      ],
+
+      requestBody: {
+        required: true,
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              minProperties: 1,
+              properties: {
+                roomNumber: {
+                  type: "string",
+                  example: "A03",
+                  description: "The new room number.",
+                },
+                capacity: {
+                  type: "integer",
+                  minimum: 1,
+                  example: 6,
+                  description: "The new room capacity.",
+                },
+              },
+            },
+          },
+        },
+      },
+
+      responses: {
+        "200": {
+          description: "Room updated successfully.",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: true,
+                  },
+                  statusCode: {
+                    type: "integer",
+                    example: 200,
+                  },
+                  message: {
+                    type: "string",
+                    example: "Room updated successfully.",
+                  },
+                  data: {
+                    type: "object",
+                    properties: {
+                      id: {
+                        type: "string",
+                        format: "uuid",
+                        example: "39be9752-d686-4afc-88a8-77d42c19b6df",
+                      },
+                      hostelId: {
+                        type: "string",
+                        format: "uuid",
+                        example: "001552a0-092e-46c2-bee7-99bd71119f12",
+                      },
+                      roomNumber: {
+                        type: "string",
+                        example: "A02",
+                      },
+                      capacity: {
+                        type: "integer",
+                        example: 6,
+                      },
+                      status: {
+                        type: "string",
+                        enum: ["AVAILABLE", "FULL", "MAINTENANCE"],
+                        example: "AVAILABLE",
+                      },
+                      createdAt: {
+                        type: "string",
+                        format: "date-time",
+                        example: "2026-09-04T19:36:48.284Z",
+                      },
+                      updatedAt: {
+                        type: "string",
+                        format: "date-time",
+                        example: "2026-09-06T10:27:17.934Z",
+                      },
+                    },
+                  },
+                },
+              },
+              example: {
+                success: true,
+                statusCode: 200,
+                message: "Room updated successfully.",
+                data: {
+                  id: "39be9752-d686-4afc-88a8-77d42c19b6df",
+                  hostelId: "001552a0-092e-46c2-bee7-99bd71119f12",
+                  roomNumber: "A02",
+                  capacity: 6,
+                  status: "AVAILABLE",
+                  createdAt: "2026-09-04T19:36:48.284Z",
+                  updatedAt: "2026-09-06T10:27:17.934Z",
+                },
+              },
+            },
+          },
+        },
+
+        "400": {
+          description: "Invalid room update data.",
+        },
+
+        "401": {
+          description: "Authentication required.",
+        },
+
+        "403": {
+          description: "You do not have permission to update a room.",
+        },
+
+        "404": {
+          description: "Room not found.",
+        },
+
+        "409": {
+          description:
+            "A room with the supplied room number already exists in this hostel.",
+        },
+      },
+    },
+
+    {
+      method: "patch",
+      path: "/api/admin/room/deactivate-room/{roomId}",
+      summary: "Deactivate a room",
+      description:
+        "Deactivates an existing room by changing its status to MAINTENANCE. The room's hostel, room number, and capacity remain unchanged.",
+      tags: ["Room"],
+      security: [{ bearerAuth: [] }],
+
+      parameters: [
+        {
+          name: "roomId",
+          in: "path",
+          required: true,
+          schema: {
+            type: "string",
+            format: "uuid",
+          },
+          description: "The unique ID of the room to deactivate.",
+        },
+      ],
+
+      responses: {
+        "200": {
+          description: "Room deactivated successfully.",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: true,
+                  },
+                  statusCode: {
+                    type: "integer",
+                    example: 200,
+                  },
+                  message: {
+                    type: "string",
+                    example: "Room deactivated successfully.",
+                  },
+                  data: {
+                    type: "object",
+                    properties: {
+                      id: {
+                        type: "string",
+                        format: "uuid",
+                        example: "39be9752-d686-4afc-88a8-77d42c19b6df",
+                      },
+                      hostelId: {
+                        type: "string",
+                        format: "uuid",
+                        example: "001552a0-092e-46c2-bee7-99bd71119f12",
+                      },
+                      roomNumber: {
+                        type: "string",
+                        example: "A02",
+                      },
+                      capacity: {
+                        type: "integer",
+                        example: 6,
+                      },
+                      status: {
+                        type: "string",
+                        enum: ["AVAILABLE", "FULL", "MAINTENANCE"],
+                        example: "MAINTENANCE",
+                      },
+                      createdAt: {
+                        type: "string",
+                        format: "date-time",
+                        example: "2026-09-04T19:36:48.284Z",
+                      },
+                      updatedAt: {
+                        type: "string",
+                        format: "date-time",
+                        example: "2026-09-06T11:06:00.416Z",
+                      },
+                    },
+                  },
+                },
+              },
+              example: {
+                success: true,
+                statusCode: 200,
+                message: "Room deactivated successfully.",
+                data: {
+                  id: "39be9752-d686-4afc-88a8-77d42c19b6df",
+                  hostelId: "001552a0-092e-46c2-bee7-99bd71119f12",
+                  roomNumber: "A02",
+                  capacity: 6,
+                  status: "MAINTENANCE",
+                  createdAt: "2026-09-04T19:36:48.284Z",
+                  updatedAt: "2026-09-06T11:06:00.416Z",
+                },
+              },
+            },
+          },
+        },
+
+        "401": {
+          description: "Authentication required.",
+        },
+
+        "403": {
+          description: "You do not have permission to deactivate a room.",
+        },
+
+        "404": {
+          description: "Room not found.",
+        },
+      },
+    },
+
+    {
+      method: "patch",
+      path: "/api/admin/room/{roomId}/activate",
+      summary: "Activate a room",
+      description:
+        "Activates an existing room by changing its status to AVAILABLE.",
+      tags: ["Room"],
+      security: [{ bearerAuth: [] }],
+
+      parameters: [
+        {
+          name: "roomId",
+          in: "path",
+          required: true,
+          schema: {
+            type: "string",
+            format: "uuid",
+          },
+          description: "The unique ID of the room to activate.",
+        },
+      ],
+
+      responses: {
+        "200": {
+          description: "Room activated successfully.",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: true,
+                  },
+                  statusCode: {
+                    type: "integer",
+                    example: 200,
+                  },
+                  message: {
+                    type: "string",
+                    example: "Room activated successfully.",
+                  },
+                  data: {
+                    type: "object",
+                    properties: {
+                      id: {
+                        type: "string",
+                        format: "uuid",
+                        example: "39be9752-d686-4afc-88a8-77d42c19b6df",
+                      },
+                      hostelId: {
+                        type: "string",
+                        format: "uuid",
+                        example: "001552a0-092e-46c2-bee7-99bd71119f12",
+                      },
+                      roomNumber: {
+                        type: "string",
+                        example: "A02",
+                      },
+                      capacity: {
+                        type: "integer",
+                        example: 6,
+                      },
+                      status: {
+                        type: "string",
+                        enum: ["AVAILABLE", "FULL", "MAINTENANCE"],
+                        example: "AVAILABLE",
+                      },
+                      createdAt: {
+                        type: "string",
+                        format: "date-time",
+                        example: "2026-09-04T19:36:48.284Z",
+                      },
+                      updatedAt: {
+                        type: "string",
+                        format: "date-time",
+                        example: "2026-09-06T11:13:32.180Z",
+                      },
+                    },
+                  },
+                },
+              },
+              example: {
+                success: true,
+                statusCode: 200,
+                message: "Room activated successfully.",
+                data: {
+                  id: "39be9752-d686-4afc-88a8-77d42c19b6df",
+                  hostelId: "001552a0-092e-46c2-bee7-99bd71119f12",
+                  roomNumber: "A02",
+                  capacity: 6,
+                  status: "AVAILABLE",
+                  createdAt: "2026-09-04T19:36:48.284Z",
+                  updatedAt: "2026-09-06T11:13:32.180Z",
+                },
+              },
+            },
+          },
+        },
+
+        "401": {
+          description: "Authentication required.",
+        },
+
+        "403": {
+          description: "You do not have permission to activate a room.",
+        },
+
+        "404": {
+          description: "Room not found.",
+        },
+      },
+    },
   ],
 
   [],
