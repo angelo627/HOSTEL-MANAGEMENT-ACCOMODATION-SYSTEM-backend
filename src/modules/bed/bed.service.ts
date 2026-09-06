@@ -88,4 +88,85 @@ export const bedService = {
 
     return beds;
   },
+
+  // Retrieve one bed together with the room and hostel it belongs to.
+  async getBedById(bedId: string) {
+    const bed = await prisma.bed.findUnique({
+      where: {
+        id: bedId,
+      },
+      include: {
+        room: {
+          include: {
+            hostel: {
+              select: {
+                id: true,
+                name: true,
+                gender: true,
+                status: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!bed) {
+      throw new AppError({
+        statusCode: 404,
+        message: "Bed not found.",
+        code: "BED_NOT_FOUND",
+      });
+    }
+
+    return bed;
+  },
+
+  // Update the bed number while keeping the bed under its existing room.
+  async updateBed(bedId: string, bedNumber: string) {
+    // Confirm that the bed exists before attempting to update it.
+    const bed = await prisma.bed.findUnique({
+      where: {
+        id: bedId,
+      },
+    });
+
+    if (!bed) {
+      throw new AppError({
+        statusCode: 404,
+        message: "Bed not found.",
+        code: "BED_NOT_FOUND",
+      });
+    }
+
+    // Prevent the same bed number from being used twice in one room.
+    const existingBed = await prisma.bed.findUnique({
+      where: {
+        roomId_bedNumber: {
+          roomId: bed.roomId,
+          bedNumber,
+        },
+      },
+    });
+
+    // Ignore the current bed when checking for a duplicate number.
+    if (existingBed && existingBed.id !== bedId) {
+      throw new AppError({
+        statusCode: 409,
+        message: "A bed with this number already exists in this room.",
+        code: "BED_ALREADY_EXISTS",
+      });
+    }
+
+    const updatedBed = await prisma.bed.update({
+      where: {
+        id: bedId,
+      },
+      data: {
+        bedNumber,
+      },
+    });
+
+    return updatedBed;
+  },
 };

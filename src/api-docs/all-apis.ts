@@ -1322,9 +1322,481 @@ export const allApis = [
         },
       },
     },
+
+    {
+      path: "/api/admin/bed/get-all-bed",
+      method: "get",
+      summary: "Get all beds",
+      description:
+        "Retrieves all beds together with the rooms and hostels they belong to. This endpoint is restricted to administrators.",
+      tags: ["Bed"],
+      security: [{ bearerAuth: [] }],
+      responses: {
+        200: {
+          description: "Beds retrieved successfully.",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: true,
+                  },
+                  statusCode: {
+                    type: "integer",
+                    example: 200,
+                  },
+                  message: {
+                    type: "string",
+                    example: "Beds retrieved successfully.",
+                  },
+                  data: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        id: {
+                          type: "string",
+                          format: "uuid",
+                        },
+                        roomId: {
+                          type: "string",
+                          format: "uuid",
+                        },
+                        bedNumber: {
+                          type: "string",
+                          example: "B2",
+                        },
+                        status: {
+                          type: "string",
+                          enum: [
+                            "AVAILABLE",
+                            "OCCUPIED",
+                            "RESERVED",
+                            "MAINTENANCE",
+                          ],
+                          example: "AVAILABLE",
+                        },
+                        createdAt: {
+                          type: "string",
+                          format: "date-time",
+                        },
+                        updatedAt: {
+                          type: "string",
+                          format: "date-time",
+                        },
+                        room: {
+                          type: "object",
+                          properties: {
+                            id: {
+                              type: "string",
+                              format: "uuid",
+                            },
+                            hostelId: {
+                              type: "string",
+                              format: "uuid",
+                            },
+                            roomNumber: {
+                              type: "string",
+                              example: "A03",
+                            },
+                            capacity: {
+                              type: "integer",
+                              example: 4,
+                            },
+                            status: {
+                              type: "string",
+                              enum: ["AVAILABLE", "FULL", "MAINTENANCE"],
+                              example: "AVAILABLE",
+                            },
+                            createdAt: {
+                              type: "string",
+                              format: "date-time",
+                            },
+                            updatedAt: {
+                              type: "string",
+                              format: "date-time",
+                            },
+                            hostel: {
+                              type: "object",
+                              properties: {
+                                id: {
+                                  type: "string",
+                                  format: "uuid",
+                                },
+                                name: {
+                                  type: "string",
+                                  example: "Hall abu",
+                                },
+                                gender: {
+                                  type: "string",
+                                  enum: ["MALE", "FEMALE"],
+                                  example: "MALE",
+                                },
+                                status: {
+                                  type: "string",
+                                  enum: ["ACTIVE", "INACTIVE"],
+                                  example: "INACTIVE",
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+              example: {
+                success: true,
+                statusCode: 200,
+                message: "Beds retrieved successfully.",
+                data: [
+                  {
+                    id: "0fd45fa1-a6cf-4327-a6ff-1630516b2fe0",
+                    roomId: "34ed2e46-2fca-4c40-b12a-0dc84f45881c",
+                    bedNumber: "B2",
+                    status: "AVAILABLE",
+                    createdAt: "2026-09-06T13:50:24.384Z",
+                    updatedAt: "2026-09-06T13:50:24.384Z",
+                    room: {
+                      id: "34ed2e46-2fca-4c40-b12a-0dc84f45881c",
+                      hostelId: "001552a0-092e-46c2-bee7-99bd71119f12",
+                      roomNumber: "A03",
+                      capacity: 4,
+                      status: "AVAILABLE",
+                      createdAt: "2026-09-06T13:46:13.029Z",
+                      updatedAt: "2026-09-06T13:46:13.029Z",
+                      hostel: {
+                        id: "001552a0-092e-46c2-bee7-99bd71119f12",
+                        name: "Hall abu",
+                        gender: "MALE",
+                        status: "INACTIVE",
+                      },
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        },
+        401: {
+          description: "Authentication required or token is invalid/expired.",
+        },
+        403: {
+          description: "User does not have permission to perform this action.",
+        },
+      },
+    },
+
+    {
+      path: "/api/user/bed/{bedId}",
+      method: "get",
+      summary: "Get bed by ID",
+      description:
+        "Retrieves a single bed together with the room and hostel it belongs to. This endpoint is available to authenticated users, including administrators.",
+      tags: ["Bed"],
+      security: [{ bearerAuth: [] }],
+      parameters: [
+        {
+          name: "bedId",
+          in: "path",
+          required: true,
+          description: "The unique ID of the bed.",
+          schema: {
+            type: "string",
+            format: "uuid",
+          },
+        },
+      ],
+      responses: {
+        200: {
+          description: "Bed retrieved successfully.",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: true,
+                  },
+                  statusCode: {
+                    type: "integer",
+                    example: 200,
+                  },
+                  message: {
+                    type: "string",
+                    example: "Bed retrieved successfully.",
+                  },
+                  data: {
+                    type: "object",
+                    properties: {
+                      id: {
+                        type: "string",
+                        format: "uuid",
+                      },
+                      roomId: {
+                        type: "string",
+                        format: "uuid",
+                      },
+                      bedNumber: {
+                        type: "string",
+                        example: "B2",
+                      },
+                      status: {
+                        type: "string",
+                        enum: [
+                          "AVAILABLE",
+                          "OCCUPIED",
+                          "RESERVED",
+                          "MAINTENANCE",
+                        ],
+                        example: "AVAILABLE",
+                      },
+                      createdAt: {
+                        type: "string",
+                        format: "date-time",
+                      },
+                      updatedAt: {
+                        type: "string",
+                        format: "date-time",
+                      },
+                      room: {
+                        type: "object",
+                        properties: {
+                          id: {
+                            type: "string",
+                            format: "uuid",
+                          },
+                          hostelId: {
+                            type: "string",
+                            format: "uuid",
+                          },
+                          roomNumber: {
+                            type: "string",
+                            example: "A03",
+                          },
+                          capacity: {
+                            type: "integer",
+                            example: 4,
+                          },
+                          status: {
+                            type: "string",
+                            enum: ["AVAILABLE", "FULL", "MAINTENANCE"],
+                            example: "AVAILABLE",
+                          },
+                          createdAt: {
+                            type: "string",
+                            format: "date-time",
+                          },
+                          updatedAt: {
+                            type: "string",
+                            format: "date-time",
+                          },
+                          hostel: {
+                            type: "object",
+                            properties: {
+                              id: {
+                                type: "string",
+                                format: "uuid",
+                              },
+                              name: {
+                                type: "string",
+                                example: "Hall abu",
+                              },
+                              gender: {
+                                type: "string",
+                                enum: ["MALE", "FEMALE"],
+                                example: "MALE",
+                              },
+                              status: {
+                                type: "string",
+                                enum: ["ACTIVE", "INACTIVE"],
+                                example: "INACTIVE",
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+              example: {
+                success: true,
+                statusCode: 200,
+                message: "Bed retrieved successfully.",
+                data: {
+                  id: "0fd45fa1-a6cf-4327-a6ff-1630516b2fe0",
+                  roomId: "34ed2e46-2fca-4c40-b12a-0dc84f45881c",
+                  bedNumber: "B2",
+                  status: "AVAILABLE",
+                  createdAt: "2026-09-06T13:50:24.384Z",
+                  updatedAt: "2026-09-06T13:50:24.384Z",
+                  room: {
+                    id: "34ed2e46-2fca-4c40-b12a-0dc84f45881c",
+                    hostelId: "001552a0-092e-46c2-bee7-99bd71119f12",
+                    roomNumber: "A03",
+                    capacity: 4,
+                    status: "AVAILABLE",
+                    createdAt: "2026-09-06T13:46:13.029Z",
+                    updatedAt: "2026-09-06T13:46:13.029Z",
+                    hostel: {
+                      id: "001552a0-092e-46c2-bee7-99bd71119f12",
+                      name: "Hall abu",
+                      gender: "MALE",
+                      status: "INACTIVE",
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        401: {
+          description: "Authentication required or token is invalid/expired.",
+        },
+        404: {
+          description: "Bed not found.",
+        },
+      },
+    },
+
+    {
+      path: "/api/admin/bed/update-bed/{bedId}",
+      method: "patch",
+      summary: "Update bed",
+      description:
+        "Updates the bed number of an existing bed. The bed status cannot be changed through this endpoint.",
+      tags: ["Bed"],
+      security: [{ bearerAuth: [] }],
+      parameters: [
+        {
+          name: "bedId",
+          in: "path",
+          required: true,
+          description: "The unique ID of the bed.",
+          schema: {
+            type: "string",
+            format: "uuid",
+          },
+        },
+      ],
+      requestBody: {
+        required: true,
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              required: ["bedNumber"],
+              properties: {
+                bedNumber: {
+                  type: "string",
+                  maxLength: 20,
+                  example: "B5",
+                },
+              },
+            },
+            example: {
+              bedNumber: "B5",
+            },
+          },
+        },
+      },
+      responses: {
+        200: {
+          description: "Bed updated successfully.",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: true,
+                  },
+                  statusCode: {
+                    type: "integer",
+                    example: 200,
+                  },
+                  message: {
+                    type: "string",
+                    example: "Bed updated successfully.",
+                  },
+                  data: {
+                    type: "object",
+                    properties: {
+                      id: {
+                        type: "string",
+                        format: "uuid",
+                      },
+                      roomId: {
+                        type: "string",
+                        format: "uuid",
+                      },
+                      bedNumber: {
+                        type: "string",
+                        example: "B5",
+                      },
+                      status: {
+                        type: "string",
+                        enum: [
+                          "AVAILABLE",
+                          "OCCUPIED",
+                          "RESERVED",
+                          "MAINTENANCE",
+                        ],
+                        example: "AVAILABLE",
+                      },
+                      createdAt: {
+                        type: "string",
+                        format: "date-time",
+                      },
+                      updatedAt: {
+                        type: "string",
+                        format: "date-time",
+                      },
+                    },
+                  },
+                },
+              },
+              example: {
+                success: true,
+                statusCode: 200,
+                message: "Bed updated successfully.",
+                data: {
+                  id: "0fd45fa1-a6cf-4327-a6ff-1630516b2fe0",
+                  roomId: "34ed2e46-2fca-4c40-b12a-0dc84f45881c",
+                  bedNumber: "B5",
+                  status: "AVAILABLE",
+                  createdAt: "2026-09-06T13:50:24.384Z",
+                  updatedAt: "2026-09-06T15:42:31.449Z",
+                },
+              },
+            },
+          },
+        },
+        400: {
+          description: "Invalid bed update data.",
+        },
+        401: {
+          description: "Authentication required or token is invalid/expired.",
+        },
+        403: {
+          description: "User does not have permission to perform this action.",
+        },
+        404: {
+          description: "Bed not found.",
+        },
+        409: {
+          description: "A bed with this number already exists in this room.",
+        },
+      },
+    },
   ],
 
-  
   [],
   [],
   [],

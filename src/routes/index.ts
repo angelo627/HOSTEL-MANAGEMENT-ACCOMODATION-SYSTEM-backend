@@ -6,7 +6,7 @@ import { hostelRouter } from "../modules/hostel/hostel.routes";
 import { userhostelRouter } from "../modules/hostel/hostel.routes";
 import { roomRouter } from "../modules/room/room.routes";
 import { userRoomRouter } from "../modules/room/room.routes";
-import { bedRouter } from "../modules/bed/bed.routes";
+import { bedRouter, userBedRouter } from "../modules/bed/bed.routes";
 
 const apiRouter = Router();
 const adminRouter = Router();
@@ -23,6 +23,7 @@ apiRouter.use("/auth", authRouter);
 apiRouter.use(authenticate);
 apiRouter.use("/user", userhostelRouter);
 apiRouter.use("/user", userRoomRouter);
+apiRouter.use("/user", userBedRouter);
 
 
 

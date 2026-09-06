@@ -25,4 +25,31 @@ export const bedController = {
       data: beds,
     });
   }),
+
+  // Retrieve one bed together with the room and hostel it belongs to.
+  getBedById: asyncHandler(async (req: Request, res: Response) => {
+    const bedId = req.params.bedId as string;
+
+    const bed = await bedService.getBedById(bedId);
+
+    sendSuccess(res, {
+      statusCode: 200,
+      message: "Bed retrieved successfully.",
+      data: bed,
+    });
+  }),
+
+  // Update the bed number of an existing bed.
+  updateBed: asyncHandler(async (req: Request, res: Response) => {
+    const bedId = req.params.bedId as string;
+    const { bedNumber } = req.body;
+
+    const bed = await bedService.updateBed(bedId, bedNumber);
+
+    sendSuccess(res, {
+      statusCode: 200,
+      message: "Bed updated successfully.",
+      data: bed,
+    });
+  }),
 };
