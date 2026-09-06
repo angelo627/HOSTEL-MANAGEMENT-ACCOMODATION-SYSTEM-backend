@@ -8,6 +8,9 @@ import { roomRouter } from "../modules/room/room.routes";
 import { userRoomRouter } from "../modules/room/room.routes";
 import { bedRouter, userBedRouter } from "../modules/bed/bed.routes";
 import { studentRouter } from "../modules/student/student.routes";
+import { bankAccountRouter } from "../modules/bankAccount/bank.routes";
+import { transactionRouter } from "../modules/transactions/transaction.routes";
+import { adminbankAccountRouter } from "../modules/bankAccount/bank.routes";
 
 const apiRouter = Router();
 const adminRouter = Router();
@@ -26,6 +29,8 @@ apiRouter.use("/user", userhostelRouter);
 apiRouter.use("/user", userRoomRouter);
 apiRouter.use("/user", userBedRouter);
 apiRouter.use("/user", studentRouter);
+apiRouter.use("/user", bankAccountRouter);
+apiRouter.use("/user", transactionRouter);
 
 
 
@@ -36,6 +41,7 @@ adminRouter.use(authorize("ADMIN", "SUPERADMIN"));
 adminRouter.use("/admin", hostelRouter);
 adminRouter.use("/admin", roomRouter);
 adminRouter.use("/admin", bedRouter);
+adminRouter.use("/admin", adminbankAccountRouter)
 
 
 

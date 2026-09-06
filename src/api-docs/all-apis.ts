@@ -1797,156 +1797,158 @@ export const allApis = [
     },
   ],
 
-  {
-    path: "/api/user/student/profile",
-    method: "get",
-    summary: "Get student profile",
-    description:
-      "Retrieves the profile of the currently authenticated student, including personal information, academic level, gender, school fee details, and hostel allocation information when available.",
-    tags: ["Student"],
-    security: [{ bearerAuth: [] }],
-    responses: {
-      200: {
-        description: "Student profile retrieved successfully.",
-        content: {
-          "application/json": {
-            schema: {
-              type: "object",
-              properties: {
-                success: {
-                  type: "boolean",
-                  example: true,
-                },
-                statusCode: {
-                  type: "integer",
-                  example: 200,
-                },
-                message: {
-                  type: "string",
-                  example: "Student profile retrieved successfully.",
-                },
-                data: {
-                  type: "object",
-                  properties: {
-                    id: {
-                      type: "string",
-                      format: "uuid",
-                    },
-                    registrationNo: {
-                      type: "string",
-                      example: "2024/685993",
-                    },
-                    firstName: {
-                      type: "string",
-                      example: "Angelo",
-                    },
-                    lastName: {
-                      type: "string",
-                      example: "Flitz",
-                    },
-                    email: {
-                      type: "string",
-                      format: "email",
-                      example: "angelo@example.com",
-                    },
-                    academicLevel: {
-                      type: "string",
-                      enum: [
-                        "LEVEL_100",
-                        "LEVEL_200",
-                        "LEVEL_300",
-                        "LEVEL_400",
-                        "LEVEL_500",
-                        "LEVEL_600",
-                      ],
-                      example: "LEVEL_600",
-                    },
-                    gender: {
-                      type: "string",
-                      nullable: true,
-                      enum: ["MALE", "FEMALE"],
-                      example: "MALE",
-                    },
-                    schoolFee: {
-                      type: "object",
-                      nullable: true,
-                      properties: {
-                        status: {
-                          type: "string",
-                          enum: ["PAID", "NOT_PAID"],
-                          example: "PAID",
-                        },
-                        rrr: {
-                          type: "string",
-                          nullable: true,
-                          example: "RRR-2025-606986",
+  [
+    {
+      path: "/api/user/student/profile",
+      method: "get",
+      summary: "Get student profile",
+      description:
+        "Retrieves the profile of the currently authenticated student, including personal information, academic level, gender, school fee details, and hostel allocation information when available.",
+      tags: ["Student"],
+      security: [{ bearerAuth: [] }],
+      responses: {
+        200: {
+          description: "Student profile retrieved successfully.",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: true,
+                  },
+                  statusCode: {
+                    type: "integer",
+                    example: 200,
+                  },
+                  message: {
+                    type: "string",
+                    example: "Student profile retrieved successfully.",
+                  },
+                  data: {
+                    type: "object",
+                    properties: {
+                      id: {
+                        type: "string",
+                        format: "uuid",
+                      },
+                      registrationNo: {
+                        type: "string",
+                        example: "2024/685993",
+                      },
+                      firstName: {
+                        type: "string",
+                        example: "Angelo",
+                      },
+                      lastName: {
+                        type: "string",
+                        example: "Flitz",
+                      },
+                      email: {
+                        type: "string",
+                        format: "email",
+                        example: "angelo@example.com",
+                      },
+                      academicLevel: {
+                        type: "string",
+                        enum: [
+                          "LEVEL_100",
+                          "LEVEL_200",
+                          "LEVEL_300",
+                          "LEVEL_400",
+                          "LEVEL_500",
+                          "LEVEL_600",
+                        ],
+                        example: "LEVEL_600",
+                      },
+                      gender: {
+                        type: "string",
+                        nullable: true,
+                        enum: ["MALE", "FEMALE"],
+                        example: "MALE",
+                      },
+                      schoolFee: {
+                        type: "object",
+                        nullable: true,
+                        properties: {
+                          status: {
+                            type: "string",
+                            enum: ["PAID", "NOT_PAID"],
+                            example: "PAID",
+                          },
+                          rrr: {
+                            type: "string",
+                            nullable: true,
+                            example: "RRR-2025-606986",
+                          },
                         },
                       },
-                    },
-                    allocation: {
-                      type: "object",
-                      nullable: true,
-                      properties: {
-                        hostel: {
-                          type: "object",
-                          properties: {
-                            id: {
-                              type: "string",
-                              format: "uuid",
-                            },
-                            name: {
-                              type: "string",
-                              example: "Hall abu",
-                            },
-                            gender: {
-                              type: "string",
-                              enum: ["MALE", "FEMALE"],
-                              example: "MALE",
-                            },
-                            status: {
-                              type: "string",
-                              enum: ["ACTIVE", "INACTIVE"],
-                              example: "ACTIVE",
-                            },
-                          },
-                        },
-                        room: {
-                          type: "object",
-                          properties: {
-                            id: {
-                              type: "string",
-                              format: "uuid",
-                            },
-                            roomNumber: {
-                              type: "string",
-                              example: "A03",
-                            },
-                            capacity: {
-                              type: "integer",
-                              example: 4,
+                      allocation: {
+                        type: "object",
+                        nullable: true,
+                        properties: {
+                          hostel: {
+                            type: "object",
+                            properties: {
+                              id: {
+                                type: "string",
+                                format: "uuid",
+                              },
+                              name: {
+                                type: "string",
+                                example: "Hall abu",
+                              },
+                              gender: {
+                                type: "string",
+                                enum: ["MALE", "FEMALE"],
+                                example: "MALE",
+                              },
+                              status: {
+                                type: "string",
+                                enum: ["ACTIVE", "INACTIVE"],
+                                example: "ACTIVE",
+                              },
                             },
                           },
-                        },
-                        bed: {
-                          type: "object",
-                          properties: {
-                            id: {
-                              type: "string",
-                              format: "uuid",
+                          room: {
+                            type: "object",
+                            properties: {
+                              id: {
+                                type: "string",
+                                format: "uuid",
+                              },
+                              roomNumber: {
+                                type: "string",
+                                example: "A03",
+                              },
+                              capacity: {
+                                type: "integer",
+                                example: 4,
+                              },
                             },
-                            bedNumber: {
-                              type: "string",
-                              example: "B2",
-                            },
-                            status: {
-                              type: "string",
-                              enum: [
-                                "AVAILABLE",
-                                "OCCUPIED",
-                                "RESERVED",
-                                "MAINTENANCE",
-                              ],
-                              example: "OCCUPIED",
+                          },
+                          bed: {
+                            type: "object",
+                            properties: {
+                              id: {
+                                type: "string",
+                                format: "uuid",
+                              },
+                              bedNumber: {
+                                type: "string",
+                                example: "B2",
+                              },
+                              status: {
+                                type: "string",
+                                enum: [
+                                  "AVAILABLE",
+                                  "OCCUPIED",
+                                  "RESERVED",
+                                  "MAINTENANCE",
+                                ],
+                                example: "OCCUPIED",
+                              },
                             },
                           },
                         },
@@ -1955,40 +1957,749 @@ export const allApis = [
                   },
                 },
               },
+              example: {
+                success: true,
+                statusCode: 200,
+                message: "Student profile retrieved successfully.",
+                data: {
+                  id: "e36c239c-c012-4a1f-90b7-b4e760f7b943",
+                  registrationNo: "2024/685993",
+                  firstName: "Angelo",
+                  lastName: "Flitz",
+                  email: "angelo@example.com",
+                  academicLevel: "LEVEL_600",
+                  gender: "MALE",
+                  schoolFee: {
+                    status: "PAID",
+                    rrr: "RRR-2025-606986",
+                  },
+                  allocation: null,
+                },
+              },
+            },
+          },
+        },
+        401: {
+          description: "Authentication required or token is invalid/expired.",
+        },
+        404: {
+          description: "Student profile not found.",
+        },
+      },
+    },
+  ],
+
+  [
+    {
+      path: "/api/user/bank-account/create",
+      method: "post",
+      summary: "Create bank account",
+      description:
+        "Creates a bank account for the currently authenticated user. The user supplies only a unique 12-digit account number. The user ID is obtained from the authenticated request, while the account type is set to STUDENT and the initial balance is set to 0.",
+      tags: ["Bank Account"],
+      security: [{ bearerAuth: [] }],
+      requestBody: {
+        required: true,
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              required: ["accountNumber"],
+              properties: {
+                accountNumber: {
+                  type: "string",
+                  pattern: "^\\d{12}$",
+                  example: "123456789012",
+                  description:
+                    "A unique account number containing exactly 12 digits.",
+                },
+              },
             },
             example: {
-              success: true,
-              statusCode: 200,
-              message: "Student profile retrieved successfully.",
-              data: {
-                id: "e36c239c-c012-4a1f-90b7-b4e760f7b943",
-                registrationNo: "2024/685993",
-                firstName: "Angelo",
-                lastName: "Flitz",
-                email: "angelo@example.com",
-                academicLevel: "LEVEL_600",
-                gender: "MALE",
-                schoolFee: {
-                  status: "PAID",
-                  rrr: "RRR-2025-606986",
+              accountNumber: "123456789012",
+            },
+          },
+        },
+      },
+      responses: {
+        201: {
+          description: "Bank account created successfully.",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: true,
+                  },
+                  statusCode: {
+                    type: "integer",
+                    example: 201,
+                  },
+                  message: {
+                    type: "string",
+                    example: "Bank account created successfully.",
+                  },
+                  data: {
+                    type: "object",
+                    properties: {
+                      id: {
+                        type: "string",
+                        format: "uuid",
+                      },
+                      userId: {
+                        type: "string",
+                        format: "uuid",
+                      },
+                      accountNumber: {
+                        type: "string",
+                        example: "123456789012",
+                      },
+                      type: {
+                        type: "string",
+                        enum: ["STUDENT", "ADMIN"],
+                        example: "STUDENT",
+                      },
+                      balance: {
+                        type: "string",
+                        example: "0",
+                      },
+                      createdAt: {
+                        type: "string",
+                        format: "date-time",
+                      },
+                      updatedAt: {
+                        type: "string",
+                        format: "date-time",
+                      },
+                    },
+                  },
                 },
-                allocation: null,
+              },
+              example: {
+                success: true,
+                statusCode: 201,
+                message: "Bank account created successfully.",
+                data: {
+                  id: "b3e52424-1f15-4600-97ab-27978e28ae66",
+                  userId: "de69090d-f52f-4f54-8667-bc21a14904ac",
+                  accountNumber: "123456789012",
+                  type: "STUDENT",
+                  balance: "0",
+                  createdAt: "2026-09-06T18:48:16.265Z",
+                  updatedAt: "2026-09-06T18:48:16.265Z",
+                },
+              },
+            },
+          },
+        },
+        400: {
+          description:
+            "Invalid request. The account number must contain exactly 12 digits.",
+        },
+        401: {
+          description: "Authentication required or token is invalid/expired.",
+        },
+        409: {
+          description:
+            "The user already has a bank account or the account number is already in use.",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: false,
+                  },
+                  statusCode: {
+                    type: "integer",
+                    example: 409,
+                  },
+                  message: {
+                    type: "string",
+                  },
+                  data: {
+                    type: "null",
+                    example: null,
+                  },
+                  code: {
+                    type: "string",
+                    enum: [
+                      "BANK_ACCOUNT_ALREADY_EXISTS",
+                      "ACCOUNT_NUMBER_ALREADY_EXISTS",
+                    ],
+                  },
+                },
+              },
+              examples: {
+                accountAlreadyExists: {
+                  summary: "User already has a bank account",
+                  value: {
+                    success: false,
+                    statusCode: 409,
+                    message: "You already have a bank account.",
+                    data: null,
+                    code: "BANK_ACCOUNT_ALREADY_EXISTS",
+                  },
+                },
+                accountNumberAlreadyExists: {
+                  summary: "Account number already exists",
+                  value: {
+                    success: false,
+                    statusCode: 409,
+                    message: "This account number is already in use.",
+                    data: null,
+                    code: "ACCOUNT_NUMBER_ALREADY_EXISTS",
+                  },
+                },
               },
             },
           },
         },
       },
-      401: {
-        description: "Authentication required or token is invalid/expired.",
-      },
-      404: {
-        description: "Student profile not found.",
+    },
+
+    {
+      path: "/api/user/get-user/bank-account",
+      method: "get",
+      summary: "Get user's bank account",
+      description:
+        "Retrieves the bank account belonging to the currently authenticated user. The user ID is obtained from the authenticated request and is not supplied by the client.",
+      tags: ["Bank Account"],
+      security: [{ bearerAuth: [] }],
+      responses: {
+        200: {
+          description: "Bank account retrieved successfully.",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: true,
+                  },
+                  statusCode: {
+                    type: "integer",
+                    example: 200,
+                  },
+                  message: {
+                    type: "string",
+                    example: "Bank account retrieved successfully.",
+                  },
+                  data: {
+                    type: "object",
+                    properties: {
+                      id: {
+                        type: "string",
+                        format: "uuid",
+                      },
+                      userId: {
+                        type: "string",
+                        format: "uuid",
+                      },
+                      accountNumber: {
+                        type: "string",
+                        example: "123456789012",
+                      },
+                      type: {
+                        type: "string",
+                        enum: ["STUDENT", "ADMIN"],
+                        example: "STUDENT",
+                      },
+                      balance: {
+                        type: "string",
+                        example: "0",
+                      },
+                      createdAt: {
+                        type: "string",
+                        format: "date-time",
+                      },
+                      updatedAt: {
+                        type: "string",
+                        format: "date-time",
+                      },
+                    },
+                  },
+                },
+              },
+              example: {
+                success: true,
+                statusCode: 200,
+                message: "Bank account retrieved successfully.",
+                data: {
+                  id: "b3e52424-1f15-4600-97ab-27978e28ae66",
+                  userId: "de69090d-f52f-4f54-8667-bc21a14904ac",
+                  accountNumber: "123456789012",
+                  type: "STUDENT",
+                  balance: "0",
+                  createdAt: "2026-09-06T18:48:16.265Z",
+                  updatedAt: "2026-09-06T18:48:16.265Z",
+                },
+              },
+            },
+          },
+        },
+        401: {
+          description: "Authentication required or token is invalid/expired.",
+        },
+        404: {
+          description: "Bank account not found.",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: false,
+                  },
+                  statusCode: {
+                    type: "integer",
+                    example: 404,
+                  },
+                  message: {
+                    type: "string",
+                    example: "Bank account not found.",
+                  },
+                  data: {
+                    type: "null",
+                    example: null,
+                  },
+                  code: {
+                    type: "string",
+                    example: "BANK_ACCOUNT_NOT_FOUND",
+                  },
+                },
+              },
+            },
+          },
+        },
       },
     },
-  },
 
-  
-  [],
-  [],
+    {
+      method: "post",
+      path: "/api/admin/fund/bank-account",
+      summary: "Fund a bank account",
+      description:
+        "Allows an administrator to add money to an existing bank account using the account number. The operation increases the account balance and creates a CREDIT transaction for audit purposes.",
+      tags: ["Bank Account"],
+      security: [{ bearerAuth: [] }],
+      requestBody: {
+        required: true,
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              required: ["accountNumber", "amount"],
+              properties: {
+                accountNumber: {
+                  type: "string",
+                  example: "123456789012",
+                  description: "The 12-digit bank account number to fund.",
+                },
+                amount: {
+                  type: "number",
+                  example: 50000,
+                  description: "The amount of money to add to the account.",
+                },
+              },
+            },
+          },
+        },
+      },
+      responses: {
+        200: {
+          description: "Bank account funded successfully.",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: true,
+                  },
+                  statusCode: {
+                    type: "integer",
+                    example: 200,
+                  },
+                  message: {
+                    type: "string",
+                    example: "Bank account funded successfully.",
+                  },
+                  data: {
+                    type: "object",
+                    properties: {
+                      bankAccount: {
+                        type: "object",
+                        properties: {
+                          id: {
+                            type: "string",
+                            format: "uuid",
+                            example: "b3e52424-1f15-4600-97ab-27978e28ae66",
+                          },
+                          userId: {
+                            type: "string",
+                            format: "uuid",
+                            example: "de69090d-f52f-4f54-8667-bc21a14904ac",
+                          },
+                          accountNumber: {
+                            type: "string",
+                            example: "123456789012",
+                          },
+                          type: {
+                            type: "string",
+                            enum: ["STUDENT", "ADMIN"],
+                            example: "STUDENT",
+                          },
+                          balance: {
+                            type: "string",
+                            example: "50000",
+                          },
+                          createdAt: {
+                            type: "string",
+                            format: "date-time",
+                            example: "2026-09-06T18:48:16.265Z",
+                          },
+                          updatedAt: {
+                            type: "string",
+                            format: "date-time",
+                            example: "2026-09-06T20:23:12.373Z",
+                          },
+                        },
+                      },
+                      transaction: {
+                        type: "object",
+                        properties: {
+                          id: {
+                            type: "string",
+                            format: "uuid",
+                            example: "30fee937-ae4e-4287-9f64-69a74d23e07f",
+                          },
+                          bankAccountId: {
+                            type: "string",
+                            format: "uuid",
+                            example: "b3e52424-1f15-4600-97ab-27978e28ae66",
+                          },
+                          reference: {
+                            type: "string",
+                            example: "FUND-1788726192153-550053",
+                          },
+                          amount: {
+                            type: "string",
+                            example: "50000",
+                          },
+                          type: {
+                            type: "string",
+                            enum: ["CREDIT", "DEBIT"],
+                            example: "CREDIT",
+                          },
+                          description: {
+                            type: "string",
+                            nullable: true,
+                            example: "Bank account funded by administrator.",
+                          },
+                          createdAt: {
+                            type: "string",
+                            format: "date-time",
+                            example: "2026-09-06T20:23:12.567Z",
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+              example: {
+                success: true,
+                statusCode: 200,
+                message: "Bank account funded successfully.",
+                data: {
+                  bankAccount: {
+                    id: "b3e52424-1f15-4600-97ab-27978e28ae66",
+                    userId: "de69090d-f52f-4f54-8667-bc21a14904ac",
+                    accountNumber: "123456789012",
+                    type: "STUDENT",
+                    balance: "50000",
+                    createdAt: "2026-09-06T18:48:16.265Z",
+                    updatedAt: "2026-09-06T20:23:12.373Z",
+                  },
+                  transaction: {
+                    id: "30fee937-ae4e-4287-9f64-69a74d23e07f",
+                    bankAccountId: "b3e52424-1f15-4600-97ab-27978e28ae66",
+                    reference: "FUND-1788726192153-550053",
+                    amount: "50000",
+                    type: "CREDIT",
+                    description: "Bank account funded by administrator.",
+                    createdAt: "2026-09-06T20:23:12.567Z",
+                  },
+                },
+              },
+            },
+          },
+        },
+
+        401: {
+          description: "Authentication required.",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: false,
+                  },
+                  statusCode: {
+                    type: "integer",
+                    example: 401,
+                  },
+                  message: {
+                    type: "string",
+                    example: "Authentication required.",
+                  },
+                  data: {
+                    type: "null",
+                    example: null,
+                  },
+                  code: {
+                    type: "string",
+                    example: "UNAUTHORIZED",
+                  },
+                },
+              },
+            },
+          },
+        },
+
+        403: {
+          description:
+            "The authenticated user does not have administrator permission.",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: false,
+                  },
+                  statusCode: {
+                    type: "integer",
+                    example: 403,
+                  },
+                  message: {
+                    type: "string",
+                    example:
+                      "You do not have permission to perform this action.",
+                  },
+                  data: {
+                    type: "null",
+                    example: null,
+                  },
+                  code: {
+                    type: "string",
+                    example: "FORBIDDEN",
+                  },
+                },
+              },
+            },
+          },
+        },
+
+        404: {
+          description: "Bank account not found.",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: false,
+                  },
+                  statusCode: {
+                    type: "integer",
+                    example: 404,
+                  },
+                  message: {
+                    type: "string",
+                    example: "Bank account not found.",
+                  },
+                  data: {
+                    type: "null",
+                    example: null,
+                  },
+                  code: {
+                    type: "string",
+                    example: "BANK_ACCOUNT_NOT_FOUND",
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  ],
+
+  [
+    {
+      method: "get",
+      path: "/api/user/transaction",
+      summary: "Get my transactions",
+      description:
+        "Retrieves all transactions belonging to the authenticated user's bank account, ordered from newest to oldest.",
+      tags: ["TRANSACTION"],
+      security: [{ bearerAuth: [] }],
+      responses: {
+        200: {
+          description: "Transactions retrieved successfully.",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: true,
+                  },
+                  statusCode: {
+                    type: "integer",
+                    example: 200,
+                  },
+                  message: {
+                    type: "string",
+                    example: "Transactions retrieved successfully.",
+                  },
+                  data: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        id: {
+                          type: "string",
+                          format: "uuid",
+                          example: "transaction-uuid",
+                        },
+                        bankAccountId: {
+                          type: "string",
+                          format: "uuid",
+                          example: "bank-account-uuid",
+                        },
+                        reference: {
+                          type: "string",
+                          example: "TXN-20260906-001",
+                        },
+                        amount: {
+                          type: "string",
+                          example: "50000.00",
+                        },
+                        type: {
+                          type: "string",
+                          enum: ["CREDIT", "DEBIT"],
+                          example: "CREDIT",
+                        },
+                        description: {
+                          type: "string",
+                          nullable: true,
+                          example: "Account funded by administrator",
+                        },
+                        createdAt: {
+                          type: "string",
+                          format: "date-time",
+                          example: "2026-09-06T19:00:00.000Z",
+                        },
+                      },
+                    },
+                    example: [
+                      {
+                        id: "transaction-uuid",
+                        bankAccountId: "bank-account-uuid",
+                        reference: "TXN-20260906-001",
+                        amount: "50000.00",
+                        type: "CREDIT",
+                        description: "Account funded by administrator",
+                        createdAt: "2026-09-06T19:00:00.000Z",
+                      },
+                    ],
+                  },
+                },
+              },
+            },
+          },
+        },
+        401: {
+          description: "Authentication required.",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: false,
+                  },
+                  statusCode: {
+                    type: "integer",
+                    example: 401,
+                  },
+                  message: {
+                    type: "string",
+                    example: "Authentication required.",
+                  },
+                  data: {
+                    type: "null",
+                    example: null,
+                  },
+                  code: {
+                    type: "string",
+                    example: "UNAUTHORIZED",
+                  },
+                },
+              },
+            },
+          },
+        },
+        404: {
+          description: "The authenticated user does not have a bank account.",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: false,
+                  },
+                  statusCode: {
+                    type: "integer",
+                    example: 404,
+                  },
+                  message: {
+                    type: "string",
+                    example: "Bank account not found.",
+                  },
+                  data: {
+                    type: "null",
+                    example: null,
+                  },
+                  code: {
+                    type: "string",
+                    example: "BANK_ACCOUNT_NOT_FOUND",
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  ],
+
   [],
 ] as const;
