@@ -1206,7 +1206,125 @@ export const allApis = [
     },
   ],
 
-  [],
+  [
+    {
+      method: "post",
+      path: "/api/admin/create-bed",
+      summary: "Create a bed",
+      description:
+        "Creates a new bed under an existing room. The bed is created with AVAILABLE status by default. The room must have available bed capacity, and duplicate bed numbers within the same room are not allowed.",
+      tags: ["Bed"],
+      security: [{ bearerAuth: [] }],
+
+      requestBody: {
+        required: true,
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              required: ["roomId", "bedNumber"],
+              properties: {
+                roomId: {
+                  type: "string",
+                  description: "ID of the room where the bed will be created.",
+                  example: "34ed2e46-2fca-4c40-b12a-0dc84f45881c",
+                },
+                bedNumber: {
+                  type: "string",
+                  description: "Bed number within the room.",
+                  example: "B2",
+                },
+              },
+            },
+          },
+        },
+      },
+
+      responses: {
+        "201": {
+          description: "Bed created successfully.",
+          content: {
+            "application/json": {
+              example: {
+                success: true,
+                statusCode: 201,
+                message: "Bed created successfully.",
+                data: {
+                  id: "0fd45fa1-a6cf-4327-a6ff-1630516b2fe0",
+                  roomId: "34ed2e46-2fca-4c40-b12a-0dc84f45881c",
+                  bedNumber: "B2",
+                  status: "AVAILABLE",
+                  createdAt: "2026-09-06T13:50:24.384Z",
+                  updatedAt: "2026-09-06T13:50:24.384Z",
+                },
+              },
+            },
+          },
+        },
+
+        "400": {
+          description: "Invalid request data.",
+        },
+
+        "401": {
+          description: "Authentication required or token is invalid/expired.",
+        },
+
+        "403": {
+          description: "User does not have permission to create a bed.",
+        },
+
+        "404": {
+          description: "Room not found.",
+          content: {
+            "application/json": {
+              example: {
+                success: false,
+                statusCode: 404,
+                message: "Room not found.",
+                data: null,
+                code: "ROOM_NOT_FOUND",
+              },
+            },
+          },
+        },
+
+        "409": {
+          description:
+            "Room has reached its bed capacity or the bed number already exists in the room.",
+          content: {
+            "application/json": {
+              examples: {
+                capacityReached: {
+                  summary: "Room bed capacity reached",
+                  value: {
+                    success: false,
+                    statusCode: 409,
+                    message: "This room has reached its bed capacity.",
+                    data: null,
+                    code: "ROOM_BED_CAPACITY_REACHED",
+                  },
+                },
+                duplicateBed: {
+                  summary: "Duplicate bed number",
+                  value: {
+                    success: false,
+                    statusCode: 409,
+                    message:
+                      "A bed with this number already exists in this room.",
+                    data: null,
+                    code: "BED_ALREADY_EXISTS",
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  ],
+
+  
   [],
   [],
   [],
