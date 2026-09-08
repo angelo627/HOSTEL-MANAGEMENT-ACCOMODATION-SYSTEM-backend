@@ -67,6 +67,7 @@ enum BedStatus {
 }
 
 enum AllocationStatus {
+  RESERVED
   ACTIVE
   CANCELLED
 }
@@ -176,6 +177,7 @@ model Hostel {
   status      HostelStatus @default(ACTIVE)
 
   rooms Room[]
+  applications HostelApplication[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -224,6 +226,9 @@ model HostelApplication {
 
   studentId String
   student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  hostelId String
+  hostel   Hostel @relation(fields: [hostelId], references: [id], onDelete: Cascade)
 
   submittedAt DateTime @default(now())
 
@@ -278,6 +283,8 @@ model Allocation {
 
   status AllocationStatus @default(ACTIVE)
 
+  reservedAt  DateTime?
+  expiresAt   DateTime?
   allocatedAt DateTime  @default(now())
   cancelledAt DateTime?
 
