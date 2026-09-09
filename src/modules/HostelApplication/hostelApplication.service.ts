@@ -8,7 +8,7 @@ export const hostelApplicationService = {
     // must be compatible with the student's gender.
     const student = await prisma.student.findUnique({
       where: {
-        id: studentId,
+        userId: studentId,
       },
       select: {
         id: true,
@@ -68,7 +68,7 @@ export const hostelApplicationService = {
     // have an application that is still active in the accommodation process.
     const existingApplication = await prisma.hostelApplication.findFirst({
       where: {
-        studentId,
+        studentId:student.id,
         status: {
           in: ["PENDING", "ELIGIBLE", "ALLOCATED"],
         },
@@ -97,7 +97,7 @@ export const hostelApplicationService = {
     // allocation and the eligibility process are handled separately.
     const application = await prisma.hostelApplication.create({
       data: {
-        studentId,
+        studentId: student.id,
         hostelId,
         status: "PENDING",
       },

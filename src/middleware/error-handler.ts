@@ -80,7 +80,18 @@ export function errorHandler(
 
   // 5. Prisma known request errors
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
-    sendError(res, 400, "Database operation failed.", `DATABASE_${error.code}`);
+    console.error("Prisma error:", {
+      code: error.code,
+      meta: error.meta,
+    });
+
+    sendError(
+      res,
+      400,
+      "Database operation failed.",
+      `DATABASE_${error.code}`,
+      error.meta,
+    );
 
     return;
   }

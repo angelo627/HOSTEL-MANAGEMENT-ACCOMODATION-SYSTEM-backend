@@ -2701,5 +2701,273 @@ export const allApis = [
     },
   ],
 
+  [
+    {
+      method: "post",
+      path: "/api/user/hostel-application",
+      summary: "Submit hostel application",
+      description:
+        "Allows an authenticated student to submit a hostel application by selecting a hostel. Room and bed selection are handled later by the allocation process.",
+      tags: ["HOSTEL APPLICATION"],
+      security: [{ bearerAuth: [] }],
+      requestBody: {
+        required: true,
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              required: ["hostelId"],
+              properties: {
+                hostelId: {
+                  type: "string",
+                  format: "uuid",
+                  example: "5d99cded-e98d-411e-ac6c-e4db15a7abd2",
+                },
+              },
+            },
+            example: {
+              hostelId: "5d99cded-e98d-411e-ac6c-e4db15a7abd2",
+            },
+          },
+        },
+      },
+      responses: {
+        201: {
+          description: "Hostel application submitted successfully.",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: true,
+                  },
+                  statusCode: {
+                    type: "integer",
+                    example: 201,
+                  },
+                  message: {
+                    type: "string",
+                    example: "Hostel application submitted successfully.",
+                  },
+                  data: {
+                    type: "object",
+                    properties: {
+                      id: {
+                        type: "string",
+                        format: "uuid",
+                        example: "8d01110c-3a96-4dbd-aa1a-c5075b997afb",
+                      },
+                      studentId: {
+                        type: "string",
+                        format: "uuid",
+                        example: "e36c239c-c012-4a1f-90b7-b4e760f7b943",
+                      },
+                      hostelId: {
+                        type: "string",
+                        format: "uuid",
+                        example: "5d99cded-e98d-411e-ac6c-e4db15a7abd2",
+                      },
+                      submittedAt: {
+                        type: "string",
+                        format: "date-time",
+                        example: "2026-09-09T21:58:53.497Z",
+                      },
+                      status: {
+                        type: "string",
+                        enum: [
+                          "PENDING",
+                          "ELIGIBLE",
+                          "ALLOCATED",
+                          "EXPIRED",
+                          "CANCELLED",
+                        ],
+                        example: "PENDING",
+                      },
+                      paymentDeadline: {
+                        type: "string",
+                        format: "date-time",
+                        nullable: true,
+                        example: null,
+                      },
+                      createdAt: {
+                        type: "string",
+                        format: "date-time",
+                        example: "2026-09-09T21:58:53.497Z",
+                      },
+                      updatedAt: {
+                        type: "string",
+                        format: "date-time",
+                        example: "2026-09-09T21:58:53.497Z",
+                      },
+                      hostel: {
+                        type: "object",
+                        properties: {
+                          id: {
+                            type: "string",
+                            format: "uuid",
+                            example: "5d99cded-e98d-411e-ac6c-e4db15a7abd2",
+                          },
+                          name: {
+                            type: "string",
+                            example: "Hall Aa",
+                          },
+                          gender: {
+                            type: "string",
+                            enum: ["MALE", "FEMALE"],
+                            example: "MALE",
+                          },
+                          status: {
+                            type: "string",
+                            enum: ["ACTIVE", "INACTIVE"],
+                            example: "ACTIVE",
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+
+        400: {
+          description: "Invalid hostel selection or student eligibility data.",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: false,
+                  },
+                  statusCode: {
+                    type: "integer",
+                    example: 400,
+                  },
+                  message: {
+                    type: "string",
+                    example:
+                      "The selected hostel is not available for your gender.",
+                  },
+                  data: {
+                    type: "null",
+                    example: null,
+                  },
+                  code: {
+                    type: "string",
+                    example: "HOSTEL_GENDER_MISMATCH",
+                  },
+                },
+              },
+            },
+          },
+        },
+
+        401: {
+          description: "Authentication required.",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: false,
+                  },
+                  statusCode: {
+                    type: "integer",
+                    example: 401,
+                  },
+                  message: {
+                    type: "string",
+                    example: "Authentication required.",
+                  },
+                  data: {
+                    type: "null",
+                    example: null,
+                  },
+                  code: {
+                    type: "string",
+                    example: "UNAUTHORIZED",
+                  },
+                },
+              },
+            },
+          },
+        },
+
+        404: {
+          description: "Student or hostel not found.",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: false,
+                  },
+                  statusCode: {
+                    type: "integer",
+                    example: 404,
+                  },
+                  message: {
+                    type: "string",
+                    example: "Hostel not found.",
+                  },
+                  data: {
+                    type: "null",
+                    example: null,
+                  },
+                  code: {
+                    type: "string",
+                    example: "HOSTEL_NOT_FOUND",
+                  },
+                },
+              },
+            },
+          },
+        },
+
+        409: {
+          description: "The student already has an active hostel application.",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: false,
+                  },
+                  statusCode: {
+                    type: "integer",
+                    example: 409,
+                  },
+                  message: {
+                    type: "string",
+                    example: "You already have an active hostel application.",
+                  },
+                  data: {
+                    type: "null",
+                    example: null,
+                  },
+                  code: {
+                    type: "string",
+                    example: "ACTIVE_APPLICATION_EXISTS",
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  ],
+
   [],
 ] as const;
