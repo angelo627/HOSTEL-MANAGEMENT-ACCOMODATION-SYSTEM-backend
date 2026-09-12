@@ -3293,4 +3293,516 @@ export const allApis = [
       },
     },
   ],
+
+  [
+    {
+      method: "post",
+      path: "/api/user/make/payment",
+      summary: "Make hostel accommodation payment",
+      description:
+        "Allows an authenticated student with an eligible hostel application and an active 48-hour bed reservation to pay the hostel accommodation fee. The supplied RRR must belong to the student, and the payment amount must match the accommodation fee of the selected hostel. On successful payment, the student's bank account is debited, a debit transaction is created, the allocation becomes active, the reserved bed becomes occupied, the application becomes allocated, and a single-use check-in code valid for 14 days is generated.",
+      tags: ["PAYMENT"],
+      security: [{ bearerAuth: [] }],
+      requestBody: {
+        required: true,
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              required: ["rrr", "amount"],
+              properties: {
+                rrr: {
+                  type: "string",
+                  example: "1234567890",
+                },
+                amount: {
+                  type: "number",
+                  format: "double",
+                  example: 10000,
+                },
+              },
+            },
+          },
+        },
+      },
+      responses: {
+        200: {
+          description: "Hostel accommodation payment successful.",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: true,
+                  },
+                  statusCode: {
+                    type: "integer",
+                    example: 200,
+                  },
+                  message: {
+                    type: "string",
+                    example: "Hostel accommodation payment successful.",
+                  },
+                  data: {
+                    type: "object",
+                    properties: {
+                      payment: {
+                        type: "object",
+                        properties: {
+                          id: {
+                            type: "string",
+                            format: "uuid",
+                            example: "bd29c431-398d-422a-a06a-25b5503d4d1b",
+                          },
+                          applicationId: {
+                            type: "string",
+                            format: "uuid",
+                            example: "dd907028-6737-4dce-8501-c31e1da09502",
+                          },
+                          amount: {
+                            type: "string",
+                            example: "10000",
+                          },
+                          status: {
+                            type: "string",
+                            enum: ["PENDING", "PAID", "EXPIRED"],
+                            example: "PAID",
+                          },
+                          paymentDeadline: {
+                            type: "string",
+                            format: "date-time",
+                            example: "2026-09-13T15:41:52.109Z",
+                          },
+                          paidAt: {
+                            type: "string",
+                            format: "date-time",
+                            example: "2026-09-12T22:43:31.511Z",
+                          },
+                          transactionId: {
+                            type: "string",
+                            format: "uuid",
+                            example: "ec2e7b67-c976-498a-8331-aba960741a50",
+                          },
+                          createdAt: {
+                            type: "string",
+                            format: "date-time",
+                            example: "2026-09-12T22:43:32.235Z",
+                          },
+                          updatedAt: {
+                            type: "string",
+                            format: "date-time",
+                            example: "2026-09-12T22:43:32.235Z",
+                          },
+                        },
+                      },
+
+                      allocation: {
+                        type: "object",
+                        properties: {
+                          id: {
+                            type: "string",
+                            format: "uuid",
+                            example: "32a9eece-3571-47a6-bea7-79f8e55385a1",
+                          },
+                          studentId: {
+                            type: "string",
+                            format: "uuid",
+                            example: "e36c239c-c012-4a1f-90b7-b4e760f7b943",
+                          },
+                          applicationId: {
+                            type: "string",
+                            format: "uuid",
+                            example: "dd907028-6737-4dce-8501-c31e1da09502",
+                          },
+                          bedId: {
+                            type: "string",
+                            format: "uuid",
+                            example: "a54ad409-c355-4e4e-8ffc-1adfc4d8172f",
+                          },
+                          status: {
+                            type: "string",
+                            enum: ["RESERVED", "ACTIVE", "CANCELLED"],
+                            example: "ACTIVE",
+                          },
+                          reservedAt: {
+                            type: "string",
+                            format: "date-time",
+                            example: "2026-09-11T15:41:52.109Z",
+                          },
+                          expiresAt: {
+                            type: "string",
+                            format: "date-time",
+                            example: "2026-09-13T15:41:52.109Z",
+                          },
+                          allocatedAt: {
+                            type: "string",
+                            format: "date-time",
+                            nullable: true,
+                            example: "2026-09-12T22:43:31.511Z",
+                          },
+                          cancelledAt: {
+                            type: "string",
+                            format: "date-time",
+                            nullable: true,
+                            example: null,
+                          },
+                          createdAt: {
+                            type: "string",
+                            format: "date-time",
+                            example: "2026-09-11T15:41:52.516Z",
+                          },
+                          updatedAt: {
+                            type: "string",
+                            format: "date-time",
+                            example: "2026-09-12T22:43:32.413Z",
+                          },
+                          bed: {
+                            type: "object",
+                            properties: {
+                              id: {
+                                type: "string",
+                                format: "uuid",
+                                example: "a54ad409-c355-4e4e-8ffc-1adfc4d8172f",
+                              },
+                              bedNumber: {
+                                type: "string",
+                                example: "B1",
+                              },
+                              room: {
+                                type: "object",
+                                properties: {
+                                  id: {
+                                    type: "string",
+                                    format: "uuid",
+                                    example:
+                                      "39be9752-d686-4afc-88a8-77d42c19b6df",
+                                  },
+                                  roomNumber: {
+                                    type: "string",
+                                    example: "A02",
+                                  },
+                                  hostel: {
+                                    type: "object",
+                                    properties: {
+                                      id: {
+                                        type: "string",
+                                        format: "uuid",
+                                        example:
+                                          "001552a0-092e-46c2-bee7-99bd71119f12",
+                                      },
+                                      name: {
+                                        type: "string",
+                                        example: "Hall abu",
+                                      },
+                                      gender: {
+                                        type: "string",
+                                        enum: ["MALE", "FEMALE"],
+                                        example: "MALE",
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+
+                      application: {
+                        type: "object",
+                        properties: {
+                          id: {
+                            type: "string",
+                            format: "uuid",
+                            example: "dd907028-6737-4dce-8501-c31e1da09502",
+                          },
+                          studentId: {
+                            type: "string",
+                            format: "uuid",
+                            example: "e36c239c-c012-4a1f-90b7-b4e760f7b943",
+                          },
+                          hostelId: {
+                            type: "string",
+                            format: "uuid",
+                            example: "001552a0-092e-46c2-bee7-99bd71119f12",
+                          },
+                          submittedAt: {
+                            type: "string",
+                            format: "date-time",
+                            example: "2026-09-11T15:40:42.913Z",
+                          },
+                          status: {
+                            type: "string",
+                            enum: [
+                              "PENDING",
+                              "ELIGIBLE",
+                              "ALLOCATED",
+                              "EXPIRED",
+                              "CANCELLED",
+                            ],
+                            example: "ALLOCATED",
+                          },
+                          paymentDeadline: {
+                            type: "string",
+                            format: "date-time",
+                            nullable: true,
+                            example: null,
+                          },
+                          createdAt: {
+                            type: "string",
+                            format: "date-time",
+                            example: "2026-09-11T15:40:42.913Z",
+                          },
+                          updatedAt: {
+                            type: "string",
+                            format: "date-time",
+                            example: "2026-09-12T22:43:33.459Z",
+                          },
+                        },
+                      },
+
+                      checkIn: {
+                        type: "object",
+                        properties: {
+                          id: {
+                            type: "string",
+                            format: "uuid",
+                            example: "aa6338cd-7dd5-4577-9e72-c7a3f7b9dc42",
+                          },
+                          allocationId: {
+                            type: "string",
+                            format: "uuid",
+                            example: "32a9eece-3571-47a6-bea7-79f8e55385a1",
+                          },
+                          code: {
+                            type: "string",
+                            example: "r-652-001",
+                          },
+                          status: {
+                            type: "string",
+                            enum: ["PENDING", "COMPLETED", "EXPIRED"],
+                            example: "PENDING",
+                          },
+                          expiresAt: {
+                            type: "string",
+                            format: "date-time",
+                            example: "2026-09-26T22:43:31.511Z",
+                          },
+                          usedAt: {
+                            type: "string",
+                            format: "date-time",
+                            nullable: true,
+                            example: null,
+                          },
+                          createdAt: {
+                            type: "string",
+                            format: "date-time",
+                            example: "2026-09-12T22:43:33.667Z",
+                          },
+                          updatedAt: {
+                            type: "string",
+                            format: "date-time",
+                            example: "2026-09-12T22:43:33.667Z",
+                          },
+                          studentId: {
+                            type: "string",
+                            format: "uuid",
+                            nullable: true,
+                            example: "e36c239c-c012-4a1f-90b7-b4e760f7b943",
+                          },
+                        },
+                      },
+
+                      bankAccount: {
+                        type: "object",
+                        properties: {
+                          id: {
+                            type: "string",
+                            format: "uuid",
+                            example: "b3e52424-1f15-4600-97ab-27978e28ae66",
+                          },
+                          userId: {
+                            type: "string",
+                            format: "uuid",
+                            nullable: true,
+                            example: "de69090d-f52f-4f54-8667-bc21a14904ac",
+                          },
+                          accountNumber: {
+                            type: "string",
+                            example: "123456789012",
+                          },
+                          type: {
+                            type: "string",
+                            enum: ["STUDENT", "ADMIN"],
+                            example: "STUDENT",
+                          },
+                          balance: {
+                            type: "string",
+                            example: "40000",
+                          },
+                          createdAt: {
+                            type: "string",
+                            format: "date-time",
+                            example: "2026-09-06T18:48:16.265Z",
+                          },
+                          updatedAt: {
+                            type: "string",
+                            format: "date-time",
+                            example: "2026-09-12T22:43:31.845Z",
+                          },
+                        },
+                      },
+
+                      transaction: {
+                        type: "object",
+                        properties: {
+                          id: {
+                            type: "string",
+                            format: "uuid",
+                            example: "ec2e7b67-c976-498a-8331-aba960741a50",
+                          },
+                          bankAccountId: {
+                            type: "string",
+                            format: "uuid",
+                            example: "b3e52424-1f15-4600-97ab-27978e28ae66",
+                          },
+                          reference: {
+                            type: "string",
+                            example:
+                              "PAY-1789253011512-70d1ba61-1317-453b-af5a-1c5d6d16ecbd",
+                          },
+                          amount: {
+                            type: "string",
+                            example: "10000",
+                          },
+                          type: {
+                            type: "string",
+                            enum: ["CREDIT", "DEBIT"],
+                            example: "DEBIT",
+                          },
+                          description: {
+                            type: "string",
+                            nullable: true,
+                            example: "Hostel accommodation payment.",
+                          },
+                          createdAt: {
+                            type: "string",
+                            format: "date-time",
+                            example: "2026-09-12T22:43:32.041Z",
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+
+        400: {
+          description:
+            "The RRR is invalid, the student has no eligible application or reservation, the reservation has expired or is inactive, the payment amount is incorrect, or the bank account has insufficient funds.",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: false,
+                  },
+                  statusCode: {
+                    type: "integer",
+                    example: 400,
+                  },
+                  message: {
+                    type: "string",
+                    example: "Invalid RRR.",
+                  },
+                  data: {
+                    type: "null",
+                    example: null,
+                  },
+                  code: {
+                    type: "string",
+                    example: "INVALID_RRR",
+                  },
+                },
+              },
+            },
+          },
+        },
+
+        401: {
+          description: "Authentication required.",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: false,
+                  },
+                  statusCode: {
+                    type: "integer",
+                    example: 401,
+                  },
+                  message: {
+                    type: "string",
+                    example: "Authentication required.",
+                  },
+                  data: {
+                    type: "null",
+                    example: null,
+                  },
+                  code: {
+                    type: "string",
+                    example: "UNAUTHORIZED",
+                  },
+                },
+              },
+            },
+          },
+        },
+
+        404: {
+          description:
+            "The student or student's bank account could not be found.",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: false,
+                  },
+                  statusCode: {
+                    type: "integer",
+                    example: 404,
+                  },
+                  message: {
+                    type: "string",
+                    example: "Student not found.",
+                  },
+                  data: {
+                    type: "null",
+                    example: null,
+                  },
+                  code: {
+                    type: "string",
+                    example: "STUDENT_NOT_FOUND",
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  ],
 ] as const;

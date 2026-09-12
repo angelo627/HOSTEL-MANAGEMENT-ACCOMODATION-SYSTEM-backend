@@ -1,5 +1,4 @@
-import { randomUUID } from "crypto";
-
+import { randomInt, randomUUID } from "crypto";
 import prisma from "../../config/prisma-client";
 import { AppError } from "../../shared/errors/app-error";
 
@@ -9,15 +8,35 @@ export interface MakePaymentInput {
   amount: number;
 }
 
+async function generateCheckInCode(): Promise<string> {
+  while (true) {
+    const firstPart = randomInt(100, 1000);
+    const secondPart = randomInt(100, 1000);
+
+    const code = `R-${firstPart}-${secondPart}`;
+
+    const existingCode = await prisma.checkIn.findUnique({
+      where: {
+        code,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!existingCode) {
+      return code;
+    }
+  }
+}
+
 export const paymentService = {
   // Verify the student's reservation and payment details,
   // then complete the accommodation payment and allocation
   // inside one Prisma transaction.
-  async makePayment({
-    userId,
-    rrr,
-    amount,
-  }: MakePaymentInput) {
+  async makePayment(input: MakePaymentInput) {
+    const { userId, rrr, amount } = input;
+
     // Find the student using the authenticated User ID.
     const student = await prisma.student.findUnique({
       where: {
@@ -106,7 +125,7 @@ export const paymentService = {
 
     const allocation = application.allocation;
 
-    // The payment must be made against an active reservation.
+    // Payment can only be made against a reserved allocation.
     if (allocation.status !== "RESERVED") {
       throw new AppError({
         statusCode: 400,
@@ -115,7 +134,7 @@ export const paymentService = {
       });
     }
 
-    // The 48-hour reservation deadline must not have passed.
+    // The reservation is valid for 48 hours.
     if (!allocation.expiresAt || allocation.expiresAt <= new Date()) {
       throw new AppError({
         statusCode: 400,
@@ -126,14 +145,13 @@ export const paymentService = {
 
     // The hostel's accommodation fee is authoritative.
     // The amount supplied by the student must match it exactly.
-    const accommodationFee = Number(
-      application.hostel.accommodationFee,
-    );
+    const accommodationFee = Number(application.hostel.accommodationFee);
 
     if (amount !== accommodationFee) {
       throw new AppError({
         statusCode: 400,
-        message: "The payment amount does not match the hostel accommodation fee.",
+        message:
+          "The payment amount does not match the hostel accommodation fee.",
         code: "INVALID_PAYMENT_AMOUNT",
       });
     }
@@ -157,7 +175,8 @@ export const paymentService = {
       });
     }
 
-    // Check the current balance before starting the transaction.
+    // Make sure the student has enough money to pay the
+    // hostel accommodation fee.
     if (Number(bankAccount.balance) < amount) {
       throw new AppError({
         statusCode: 400,
@@ -168,19 +187,18 @@ export const paymentService = {
 
     const now = new Date();
 
-    // The check-in code remains valid for 14 days after payment.
-    const checkInExpiresAt = new Date(
-      now.getTime() + 14 * 24 * 60 * 60 * 1000,
-    );
+    // The check-in code remains valid for 14 days after
+    // the accommodation payment is completed.
+    const checkInExpiresAt = new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000);
 
-    const checkInCode = randomUUID();
-
+    const checkInCode = await generateCheckInCode();
+    
     const transactionReference = `PAY-${Date.now()}-${randomUUID()}`;
 
     const result = await prisma.$transaction(async (tx) => {
-      // Re-check the reservation inside the transaction so that
-      // payment cannot complete against a reservation that changed
-      // after the initial verification.
+      // Re-check the reservation inside the transaction.
+      // This prevents payment from completing if the reservation
+      // changed after the initial verification.
       const currentAllocation = await tx.allocation.findUnique({
         where: {
           id: allocation.id,
@@ -194,10 +212,7 @@ export const paymentService = {
         },
       });
 
-      if (
-        !currentAllocation ||
-        currentAllocation.status !== "RESERVED"
-      ) {
+      if (!currentAllocation || currentAllocation.status !== "RESERVED") {
         throw new AppError({
           statusCode: 400,
           message: "This hostel reservation is no longer active.",
@@ -205,10 +220,7 @@ export const paymentService = {
         });
       }
 
-      if (
-        !currentAllocation.expiresAt ||
-        currentAllocation.expiresAt <= now
-      ) {
+      if (!currentAllocation.expiresAt || currentAllocation.expiresAt <= now) {
         throw new AppError({
           statusCode: 400,
           message: "The hostel reservation has expired.",
@@ -251,7 +263,7 @@ export const paymentService = {
         },
       });
 
-      // Activate the student's reserved allocation.
+      // Change the allocation from RESERVED to ACTIVE.
       const updatedAllocation = await tx.allocation.update({
         where: {
           id: allocation.id,
@@ -283,7 +295,7 @@ export const paymentService = {
         },
       });
 
-      // The reserved bed now becomes occupied.
+      // The reserved bed is now occupied.
       await tx.bed.update({
         where: {
           id: allocation.bedId,
@@ -294,17 +306,17 @@ export const paymentService = {
       });
 
       // The student's application is now fully allocated.
-      const updatedApplication =
-        await tx.hostelApplication.update({
-          where: {
-            id: application.id,
-          },
-          data: {
-            status: "ALLOCATED",
-          },
-        });
+      const updatedApplication = await tx.hostelApplication.update({
+        where: {
+          id: application.id,
+        },
+        data: {
+          status: "ALLOCATED",
+        },
+      });
 
       // Generate the student's single-use check-in record.
+      // The code expires 14 days after successful payment.
       const checkIn = await tx.checkIn.create({
         data: {
           allocationId: allocation.id,
