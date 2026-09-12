@@ -12,6 +12,7 @@ import { bankAccountRouter } from "../modules/bankAccount/bank.routes";
 import { transactionRouter } from "../modules/transactions/transaction.routes";
 import { adminbankAccountRouter } from "../modules/bankAccount/bank.routes";
 import { hostelApplicationRouter } from "../modules/HostelApplication/hostelApplication.routes";
+import { allocationRouter } from "../modules/allocations/allocation.routes";
 
 const apiRouter = Router();
 const adminRouter = Router();
@@ -33,6 +34,7 @@ apiRouter.use("/user", studentRouter);
 apiRouter.use("/user", bankAccountRouter);
 apiRouter.use("/user", transactionRouter);
 apiRouter.use("/user", hostelApplicationRouter);
+apiRouter.use("/user", allocationRouter);
 
 
 

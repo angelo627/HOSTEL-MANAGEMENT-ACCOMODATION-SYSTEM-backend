@@ -2969,5 +2969,286 @@ export const allApis = [
     },
   ],
 
-  [],
+  [
+    {
+      method: "post",
+      path: "/api/user/allocation",
+      summary: "Reserve a bed",
+      description:
+        "Allows an authenticated student with an eligible hostel application to reserve an available bed in the selected hostel. Allocation follows FCFS scheduling, and the system automatically selects the available room and bed. The reservation remains valid for 48 hours.",
+      tags: ["ALLOCATION"],
+      security: [{ bearerAuth: [] }],
+      responses: {
+        201: {
+          description: "Bed reserved successfully.",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: true,
+                  },
+                  statusCode: {
+                    type: "integer",
+                    example: 201,
+                  },
+                  message: {
+                    type: "string",
+                    example: "Bed reserved successfully.",
+                  },
+                  data: {
+                    type: "object",
+                    properties: {
+                      id: {
+                        type: "string",
+                        format: "uuid",
+                        example: "32a9eece-3571-47a6-bea7-79f8e55385a1",
+                      },
+                      studentId: {
+                        type: "string",
+                        format: "uuid",
+                        example: "e36c239c-c012-4a1f-90b7-b4e760f7b943",
+                      },
+                      applicationId: {
+                        type: "string",
+                        format: "uuid",
+                        example: "dd907028-6737-4dce-8501-c31e1da09502",
+                      },
+                      bedId: {
+                        type: "string",
+                        format: "uuid",
+                        example: "a54ad409-c355-4e4e-8ffc-1adfc4d8172f",
+                      },
+                      status: {
+                        type: "string",
+                        enum: ["RESERVED", "ACTIVE", "CANCELLED"],
+                        example: "RESERVED",
+                      },
+                      reservedAt: {
+                        type: "string",
+                        format: "date-time",
+                        example: "2026-09-11T15:41:52.109Z",
+                      },
+                      expiresAt: {
+                        type: "string",
+                        format: "date-time",
+                        example: "2026-09-13T15:41:52.109Z",
+                      },
+                      allocatedAt: {
+                        type: "string",
+                        format: "date-time",
+                        nullable: true,
+                        example: null,
+                      },
+                      cancelledAt: {
+                        type: "string",
+                        format: "date-time",
+                        nullable: true,
+                        example: null,
+                      },
+                      createdAt: {
+                        type: "string",
+                        format: "date-time",
+                        example: "2026-09-11T15:41:52.516Z",
+                      },
+                      updatedAt: {
+                        type: "string",
+                        format: "date-time",
+                        example: "2026-09-11T15:41:52.516Z",
+                      },
+                      bed: {
+                        type: "object",
+                        properties: {
+                          id: {
+                            type: "string",
+                            format: "uuid",
+                            example: "a54ad409-c355-4e4e-8ffc-1adfc4d8172f",
+                          },
+                          bedNumber: {
+                            type: "string",
+                            example: "B1",
+                          },
+                          room: {
+                            type: "object",
+                            properties: {
+                              id: {
+                                type: "string",
+                                format: "uuid",
+                                example: "39be9752-d686-4afc-88a8-77d42c19b6df",
+                              },
+                              roomNumber: {
+                                type: "string",
+                                example: "A02",
+                              },
+                              hostel: {
+                                type: "object",
+                                properties: {
+                                  id: {
+                                    type: "string",
+                                    format: "uuid",
+                                    example:
+                                      "001552a0-092e-46c2-bee7-99bd71119f12",
+                                  },
+                                  name: {
+                                    type: "string",
+                                    example: "Hall abu",
+                                  },
+                                  gender: {
+                                    type: "string",
+                                    enum: ["MALE", "FEMALE"],
+                                    example: "MALE",
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+
+        400: {
+          description:
+            "The student is not eligible for allocation or does not have the required gender information.",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: false,
+                  },
+                  statusCode: {
+                    type: "integer",
+                    example: 400,
+                  },
+                  message: {
+                    type: "string",
+                    example: "You do not have an eligible hostel application.",
+                  },
+                  data: {
+                    type: "null",
+                    example: null,
+                  },
+                  code: {
+                    type: "string",
+                    example: "ELIGIBLE_APPLICATION_NOT_FOUND",
+                  },
+                },
+              },
+            },
+          },
+        },
+
+        401: {
+          description: "Authentication required.",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: false,
+                  },
+                  statusCode: {
+                    type: "integer",
+                    example: 401,
+                  },
+                  message: {
+                    type: "string",
+                    example: "Authentication required.",
+                  },
+                  data: {
+                    type: "null",
+                    example: null,
+                  },
+                  code: {
+                    type: "string",
+                    example: "UNAUTHORIZED",
+                  },
+                },
+              },
+            },
+          },
+        },
+
+        404: {
+          description: "Student not found.",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: false,
+                  },
+                  statusCode: {
+                    type: "integer",
+                    example: 404,
+                  },
+                  message: {
+                    type: "string",
+                    example: "Student not found.",
+                  },
+                  data: {
+                    type: "null",
+                    example: null,
+                  },
+                  code: {
+                    type: "string",
+                    example: "STUDENT_NOT_FOUND",
+                  },
+                },
+              },
+            },
+          },
+        },
+
+        409: {
+          description:
+            "The FCFS queue has not reached the student, the application already has an allocation, or no available bed exists.",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: false,
+                  },
+                  statusCode: {
+                    type: "integer",
+                    example: 409,
+                  },
+                  message: {
+                    type: "string",
+                    example:
+                      "Another eligible application is ahead of you in the allocation queue.",
+                  },
+                  data: {
+                    type: "null",
+                    example: null,
+                  },
+                  code: {
+                    type: "string",
+                    example: "FCFS_QUEUE_NOT_REACHED",
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  ],
 ] as const;

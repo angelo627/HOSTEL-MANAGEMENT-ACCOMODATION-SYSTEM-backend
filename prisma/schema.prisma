@@ -285,7 +285,7 @@ model Allocation {
 
   reservedAt  DateTime?
   expiresAt   DateTime?
-  allocatedAt DateTime  @default(now())
+  allocatedAt DateTime?
   cancelledAt DateTime?
 
   createdAt DateTime @default(now())
