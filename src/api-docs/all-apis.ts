@@ -148,12 +148,33 @@ export const allApis = [
           "multipart/form-data": {
             schema: {
               type: "object",
-              required: ["name", "gender", "image"],
+              required: ["name", "gender", "accommodationFee", "image"],
               properties: {
-                name: { type: "string", minLength: 2, maxLength: 100 },
-                description: { type: "string", maxLength: 1000 },
-                gender: { type: "string", enum: ["MALE", "FEMALE"] },
-                image: { type: "string", format: "binary" },
+                name: {
+                  type: "string",
+                  minLength: 2,
+                  maxLength: 100,
+                },
+                description: {
+                  type: "string",
+                  maxLength: 1000,
+                },
+                gender: {
+                  type: "string",
+                  enum: ["MALE", "FEMALE"],
+                },
+                accommodationFee: {
+                  type: "number",
+                  format: "double",
+                  minimum: 0,
+                  exclusiveMinimum: true,
+                  description: "Accommodation fee for the hostel.",
+                  example: 50000,
+                },
+                image: {
+                  type: "string",
+                  format: "binary",
+                },
               },
             },
           },
@@ -225,10 +246,31 @@ export const allApis = [
             schema: {
               type: "object",
               properties: {
-                name: { type: "string", minLength: 2, maxLength: 100 },
-                description: { type: "string", maxLength: 1000 },
-                gender: { type: "string", enum: ["MALE", "FEMALE"] },
-                image: { type: "string", format: "binary" },
+                name: {
+                  type: "string",
+                  minLength: 2,
+                  maxLength: 100,
+                },
+                description: {
+                  type: "string",
+                  maxLength: 1000,
+                },
+                gender: {
+                  type: "string",
+                  enum: ["MALE", "FEMALE"],
+                },
+                accommodationFee: {
+                  type: "number",
+                  format: "double",
+                  minimum: 0,
+                  exclusiveMinimum: true,
+                  description: "Updated accommodation fee for the hostel.",
+                  example: 50000,
+                },
+                image: {
+                  type: "string",
+                  format: "binary",
+                },
               },
             },
           },

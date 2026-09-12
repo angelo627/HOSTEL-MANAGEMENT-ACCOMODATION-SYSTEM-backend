@@ -18,12 +18,13 @@ export const hostelController = {
       });
     }
 
-    const { name, description, gender } = req.body;
+    const { name, description, gender, accommodationFee } = req.body;
 
     const hostel = await hostelService.createHostel(
       name,
       description,
       gender,
+      accommodationFee,
       req.file.buffer,
     );
 
@@ -60,13 +61,14 @@ export const hostelController = {
   updateHostel: asyncHandler(async (req: Request, res: Response) => {
     const hostelId = req.params.hostelId as string;
 
-    const { name, description, gender } = req.body;
+    const { name, description, gender, accommodationFee } = req.body;
 
     const hostel = await hostelService.updateHostel(
       hostelId,
       name,
       description,
       gender,
+      accommodationFee,
       req.file?.buffer,
     );
 

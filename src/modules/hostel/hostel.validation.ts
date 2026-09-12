@@ -15,6 +15,11 @@ export const createHostelSchema = z.object({
     .optional(),
 
   gender: z.enum(["MALE", "FEMALE"]),
+
+  accommodationFee: z.coerce
+    .number()
+    .positive("Accommodation fee must be greater than zero.")
+    .finite("Accommodation fee must be a valid number."),
 });
 
 // Validate fields that may be changed when updating a hostel.
@@ -32,7 +37,11 @@ export const updateHostelSchema = z.object({
     .max(1000, "Description must not exceed 1000 characters.")
     .optional(),
 
-  gender: z
-    .enum(["MALE", "FEMALE"])
+  gender: z.enum(["MALE", "FEMALE"]).optional(),
+
+  accommodationFee: z.coerce
+    .number()
+    .positive("Accommodation fee must be greater than zero.")
+    .finite("Accommodation fee must be a valid number.")
     .optional(),
 });

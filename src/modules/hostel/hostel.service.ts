@@ -9,6 +9,7 @@ export const hostelService = {
     name: string,
     description: string | undefined,
     gender: "MALE" | "FEMALE",
+    accommodationFee: number,
     imageBuffer: Buffer,
   ) {
     const existingHostel = await prisma.hostel.findFirst({
@@ -35,6 +36,7 @@ export const hostelService = {
         name,
         description: description ?? null,
         gender,
+        accommodationFee,
         imageUrl: uploadedImage.secure_url,
         imagePublicId: uploadedImage.public_id,
       },
@@ -87,6 +89,7 @@ export const hostelService = {
     name: string | undefined,
     description: string | undefined,
     gender: "MALE" | "FEMALE" | undefined,
+    accommodationFee: number | undefined,
     imageBuffer?: Buffer,
   ) {
     // Make sure the hostel exists before updating it.
@@ -147,6 +150,7 @@ export const hostelService = {
         ...(name !== undefined && { name }),
         ...(description !== undefined && { description }),
         ...(gender !== undefined && { gender }),
+        ...(accommodationFee !== undefined && { accommodationFee }),
         ...(imageBuffer && {
           imageUrl,
           imagePublicId,
