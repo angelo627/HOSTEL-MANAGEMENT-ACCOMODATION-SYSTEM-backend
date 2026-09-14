@@ -3805,4 +3805,193 @@ export const allApis = [
       },
     },
   ],
+
+  [
+    {
+      method: "post",
+      path: "/api/admin/check-in",
+      summary: "Complete student check-in",
+      description:
+        "Allows an authenticated admin to complete a student's hostel check-in using the single-use check-in code generated after successful accommodation payment. The code must be valid, pending, and unexpired. The student's allocation must be active and the allocated bed must be reserved. On success, the bed becomes occupied and the check-in is marked as completed.",
+      tags: ["CHECK-IN"],
+      security: [{ bearerAuth: [] }],
+      requestBody: {
+        required: true,
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              required: ["code"],
+              properties: {
+                code: {
+                  type: "string",
+                  pattern: "^R-\\d{3}-\\d{3}$",
+                  example: "R-678-458",
+                  description: "The student's single-use check-in code.",
+                },
+              },
+            },
+          },
+        },
+      },
+      responses: {
+        200: {
+          description: "Student checked in successfully.",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: true,
+                  },
+                  statusCode: {
+                    type: "integer",
+                    example: 200,
+                  },
+                  message: {
+                    type: "string",
+                    example: "Student checked in successfully.",
+                  },
+                  data: {
+                    type: "object",
+                    properties: {
+                      id: {
+                        type: "string",
+                        example: "aa6338cd-7dd5-4577-9e72-c7a3f7b9dc42",
+                      },
+                      allocationId: {
+                        type: "string",
+                        example: "32a9eece-3571-47a6-bea7-79f8e55385a1",
+                      },
+                      code: {
+                        type: "string",
+                        example: "R-678-458",
+                      },
+                      status: {
+                        type: "string",
+                        example: "COMPLETED",
+                      },
+                      expiresAt: {
+                        type: "string",
+                        format: "date-time",
+                        example: "2026-09-26T22:43:31.511Z",
+                      },
+                      usedAt: {
+                        type: "string",
+                        format: "date-time",
+                        example: "2026-09-14T00:05:25.530Z",
+                      },
+                      createdAt: {
+                        type: "string",
+                        format: "date-time",
+                        example: "2026-09-12T22:43:33.667Z",
+                      },
+                      updatedAt: {
+                        type: "string",
+                        format: "date-time",
+                        example: "2026-09-14T00:05:26.142Z",
+                      },
+                      studentId: {
+                        type: "string",
+                        example: "e36c239c-c012-4a1f-90b7-b4e760f7b943",
+                      },
+                      allocation: {
+                        type: "object",
+                        properties: {
+                          id: {
+                            type: "string",
+                            example: "32a9eece-3571-47a6-bea7-79f8e55385a1",
+                          },
+                          status: {
+                            type: "string",
+                            example: "ACTIVE",
+                          },
+                          studentId: {
+                            type: "string",
+                            example: "e36c239c-c012-4a1f-90b7-b4e760f7b943",
+                          },
+                          bed: {
+                            type: "object",
+                            properties: {
+                              id: {
+                                type: "string",
+                                example: "a54ad409-c355-4e4e-8ffc-1adfc4d8172f",
+                              },
+                              bedNumber: {
+                                type: "string",
+                                example: "B1",
+                              },
+                              status: {
+                                type: "string",
+                                example: "OCCUPIED",
+                              },
+                              room: {
+                                type: "object",
+                                properties: {
+                                  id: {
+                                    type: "string",
+                                    example:
+                                      "39be9752-d686-4afc-88a8-77d42c19b6df",
+                                  },
+                                  roomNumber: {
+                                    type: "string",
+                                    example: "A02",
+                                  },
+                                  hostel: {
+                                    type: "object",
+                                    properties: {
+                                      id: {
+                                        type: "string",
+                                        example:
+                                          "001552a0-092e-46c2-bee7-99bd71119f12",
+                                      },
+                                      name: {
+                                        type: "string",
+                                        example: "Hall abu",
+                                      },
+                                      gender: {
+                                        type: "string",
+                                        example: "MALE",
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+
+        400: {
+          description:
+            "Invalid check-in code, code already used, code expired, or allocation is not active.",
+        },
+
+        401: {
+          description: "Authentication required or token is invalid.",
+        },
+
+        403: {
+          description: "Only admins and superadmins can complete check-in.",
+        },
+
+        404: {
+          description: "Check-in code or allocated bed was not found.",
+        },
+
+        409: {
+          description: "The allocated bed is not reserved for check-in.",
+        },
+      },
+    },
+  ],
 ] as const;

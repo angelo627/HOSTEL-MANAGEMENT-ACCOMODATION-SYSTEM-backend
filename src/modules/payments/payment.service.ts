@@ -295,16 +295,6 @@ export const paymentService = {
         },
       });
 
-      // The reserved bed is now occupied.
-      await tx.bed.update({
-        where: {
-          id: allocation.bedId,
-        },
-        data: {
-          status: "OCCUPIED",
-        },
-      });
-
       // The student's application is now fully allocated.
       const updatedApplication = await tx.hostelApplication.update({
         where: {
