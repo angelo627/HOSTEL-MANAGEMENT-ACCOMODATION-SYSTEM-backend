@@ -7,6 +7,11 @@ export interface CreateIssueInput {
   description: string;
 }
 
+export interface DeleteIssueInput {
+  userId: string;
+  issueId: string;
+}
+
 export const issueService = {
   async createIssue(input: CreateIssueInput) {
     const { userId, title, description } = input;
@@ -64,5 +69,61 @@ export const issueService = {
     });
 
     return issues;
+  },
+
+  async deleteIssue(input: DeleteIssueInput) {
+    const { userId, issueId } = input;
+
+    const student = await prisma.student.findUnique({
+      where: { userId },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!student) {
+      throw new AppError({
+        statusCode: 404,
+        message: "Student record not found.",
+        code: "STUDENT_NOT_FOUND",
+      });
+    }
+
+    const issue = await prisma.issue.findUnique({
+      where: { id: issueId },
+      select: {
+        id: true,
+        studentId: true,
+        status: true,
+      },
+    });
+
+    if (!issue) {
+      throw new AppError({
+        statusCode: 404,
+        message: "Issue not found.",
+        code: "ISSUE_NOT_FOUND",
+      });
+    }
+
+    if (issue.studentId !== student.id) {
+      throw new AppError({
+        statusCode: 403,
+        message: "You are not allowed to delete this issue.",
+        code: "ISSUE_DELETE_FORBIDDEN",
+      });
+    }
+
+    if (issue.status !== "OPEN") {
+      throw new AppError({
+        statusCode: 400,
+        message: "Only open issues can be deleted.",
+        code: "ISSUE_NOT_OPEN",
+      });
+    }
+
+    await prisma.issue.delete({
+      where: { id: issue.id },
+    });
   },
 };

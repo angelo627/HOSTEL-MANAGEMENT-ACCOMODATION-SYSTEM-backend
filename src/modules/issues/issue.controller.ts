@@ -28,4 +28,20 @@ export const issueController = {
       data: issues,
     });
   }),
+
+  deleteIssue: asyncHandler(async (req: Request, res: Response) => {
+    const userId = req.user!.id;
+    const issueId = req.params.issueId as string;
+
+    await issueService.deleteIssue({
+      userId,
+      issueId,
+    });
+
+    sendSuccess(res, {
+      statusCode: 200,
+      message: "Issue deleted successfully.",
+      data: null,
+    });
+  }),
 };

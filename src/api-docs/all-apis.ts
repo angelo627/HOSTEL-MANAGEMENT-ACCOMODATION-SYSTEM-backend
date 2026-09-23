@@ -4119,8 +4119,6 @@ export const allApis = [
       },
     },
 
-
-    
     {
       method: "get",
       path: "/api/user/my/issues",
@@ -4215,6 +4213,80 @@ export const allApis = [
 
         404: {
           description: "Student record was not found.",
+        },
+      },
+    },
+
+    
+
+    {
+      method: "delete",
+      path: "/api/user/delete/issue/{issueId}",
+      summary: "Delete a reported issue",
+      description:
+        "Allows an authenticated student to delete their own reported issue only when the issue status is OPEN.",
+      tags: ["ISSUE"],
+      security: [{ bearerAuth: [] }],
+
+      parameters: [
+        {
+          name: "issueId",
+          in: "path",
+          required: true,
+          schema: {
+            type: "string",
+          },
+          description: "The ID of the issue to delete.",
+          example: "2474f814-0ac3-42e2-8cab-cad75b2282e3",
+        },
+      ],
+
+      responses: {
+        200: {
+          description: "Issue deleted successfully.",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: true,
+                  },
+                  statusCode: {
+                    type: "integer",
+                    example: 200,
+                  },
+                  message: {
+                    type: "string",
+                    example: "Issue deleted successfully.",
+                  },
+                  data: {
+                    nullable: true,
+                    example: null,
+                  },
+                },
+              },
+            },
+          },
+        },
+
+        400: {
+          description: "Only issues with an OPEN status can be deleted.",
+        },
+
+        401: {
+          description: "Authentication required or token is invalid.",
+        },
+
+        403: {
+          description:
+            "The authenticated student is not allowed to delete this issue.",
+        },
+
+        404: {
+          description:
+            "The issue or authenticated student's record was not found.",
         },
       },
     },

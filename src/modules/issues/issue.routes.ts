@@ -16,4 +16,9 @@ issueRouter.get(
   issueController.getUserIssues,
 );
 
+issueRouter.delete(
+  "/delete/issue/:issueId",
+  issueController.deleteIssue,
+);
+
 export { issueRouter };
