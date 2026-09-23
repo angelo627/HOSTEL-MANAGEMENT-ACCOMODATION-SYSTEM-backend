@@ -3994,4 +3994,129 @@ export const allApis = [
       },
     },
   ],
+
+  [
+    {
+      method: "post",
+      path: "/api/user/create/issues",
+      summary: "Report an issue",
+      description:
+        "Allows an authenticated student to report an issue related to their hostel accommodation. The issue is automatically associated with the authenticated student and created with an OPEN status.",
+      tags: ["ISSUE"],
+      security: [{ bearerAuth: [] }],
+      requestBody: {
+        required: true,
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              required: ["title", "description"],
+              properties: {
+                title: {
+                  type: "string",
+                  example: "Broken bathroom tap",
+                  description: "The title of the reported issue.",
+                },
+                description: {
+                  type: "string",
+                  example: "The bathroom tap has been leaking for two days.",
+                  description: "A detailed description of the reported issue.",
+                },
+              },
+            },
+          },
+        },
+      },
+      responses: {
+        201: {
+          description: "Issue reported successfully.",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: true,
+                  },
+                  statusCode: {
+                    type: "integer",
+                    example: 201,
+                  },
+                  message: {
+                    type: "string",
+                    example: "Issue reported successfully.",
+                  },
+                  data: {
+                    type: "object",
+                    properties: {
+                      id: {
+                        type: "string",
+                        example: "2474f814-0ac3-42e2-8cab-cad75b2282e3",
+                      },
+                      studentId: {
+                        type: "string",
+                        example: "e36c239c-c012-4a1f-90b7-b4e760f7b943",
+                      },
+                      reportedById: {
+                        type: "string",
+                        example: "de69090d-f52f-4f54-8667-bc21a14904ac",
+                      },
+                      resolvedById: {
+                        type: "string",
+                        nullable: true,
+                        example: null,
+                      },
+                      title: {
+                        type: "string",
+                        example: "Broken bathroom tap",
+                      },
+                      description: {
+                        type: "string",
+                        example:
+                          "The bathroom tap has been leaking for two days.",
+                      },
+                      status: {
+                        type: "string",
+                        example: "OPEN",
+                      },
+                      resolvedAt: {
+                        type: "string",
+                        format: "date-time",
+                        nullable: true,
+                        example: null,
+                      },
+                      createdAt: {
+                        type: "string",
+                        format: "date-time",
+                        example: "2026-09-23T02:50:38.392Z",
+                      },
+                      updatedAt: {
+                        type: "string",
+                        format: "date-time",
+                        example: "2026-09-23T02:50:38.392Z",
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+
+        400: {
+          description:
+            "Invalid request data. The issue title and description are required.",
+        },
+
+        401: {
+          description: "Authentication required or token is invalid.",
+        },
+
+        404: {
+          description: "Student record was not found.",
+        },
+      },
+    },
+  ],
 ] as const;
