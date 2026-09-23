@@ -11,4 +11,9 @@ issueRouter.post(
   issueController.createIssue,
 );
 
+issueRouter.get(
+  "/my/issues",
+  issueController.getUserIssues,
+);
+
 export { issueRouter };

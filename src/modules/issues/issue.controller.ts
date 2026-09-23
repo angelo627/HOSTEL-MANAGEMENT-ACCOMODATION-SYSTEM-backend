@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { issueService } from "./issue.service";
 import { asyncHandler } from "../../shared/utils/async-handler";
-import { sendCreated } from "../../middleware/response-formatter";
+import { sendCreated, sendSuccess } from "../../middleware/response-formatter";
 
 export const issueController = {
   createIssue: asyncHandler(async (req: Request, res: Response) => {
@@ -15,5 +15,17 @@ export const issueController = {
     });
 
     sendCreated(res, "Issue reported successfully.", issue);
+  }),
+
+  getUserIssues: asyncHandler(async (req: Request, res: Response) => {
+    const userId = req.user!.id;
+
+    const issues = await issueService.getUserIssues(userId);
+
+    sendSuccess(res, {
+      statusCode: 200,
+      message: "Issues retrieved successfully.",
+      data: issues,
+    });
   }),
 };
