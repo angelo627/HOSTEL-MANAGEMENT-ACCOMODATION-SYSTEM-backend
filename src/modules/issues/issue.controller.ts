@@ -54,4 +54,48 @@ export const issueController = {
       data: issues,
     });
   }),
+
+  getAdminIssueById: asyncHandler(async (req: Request, res: Response) => {
+    const issueId = req.params.issueId as string;
+
+    const issue = await issueService.getAdminIssueById(issueId);
+
+    sendSuccess(res, {
+      statusCode: 200,
+      message: "Issue retrieved successfully.",
+      data: issue,
+    });
+  }),
+
+  updateIssueStatus: asyncHandler(async (req: Request, res: Response) => {
+    const adminId = req.user!.id;
+    const issueId = req.params.issueId as string;
+    const { status } = req.body;
+
+    const issue = await issueService.updateIssueStatus({
+      issueId,
+      adminId,
+      status,
+    });
+
+    sendSuccess(res, {
+      statusCode: 200,
+      message: "Issue status updated successfully.",
+      data: issue,
+    });
+  }),
+
+  adminDeleteIssue: asyncHandler(async (req: Request, res: Response) => {
+    const issueId = req.params.issueId as string;
+
+    await issueService.adminDeleteIssue({
+      issueId,
+    });
+
+    sendSuccess(res, {
+      statusCode: 200,
+      message: "Issue deleted successfully.",
+      data: null,
+    });
+  }),
 };

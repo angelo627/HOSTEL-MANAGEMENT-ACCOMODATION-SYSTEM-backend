@@ -12,6 +12,16 @@ export interface DeleteIssueInput {
   issueId: string;
 }
 
+export interface UpdateIssueStatusInput {
+  issueId: string;
+  adminId: string;
+  status: "OPEN" | "IN_PROGRESS" | "RESOLVED" | "CLOSED";
+}
+
+export interface AdminDeleteIssueInput {
+  issueId: string;
+}
+
 export const issueService = {
   async createIssue(input: CreateIssueInput) {
     const { userId, title, description } = input;
@@ -147,5 +157,140 @@ export const issueService = {
     });
 
     return issues;
+  },
+
+  async getAdminIssueById(issueId: string) {
+    const issue = await prisma.issue.findUnique({
+      where: {
+        id: issueId,
+      },
+      include: {
+        student: {
+          select: {
+            user: {
+              select: {
+                firstName: true,
+                lastName: true,
+              },
+            },
+          },
+        },
+
+        reportedBy: {
+          select: {
+            firstName: true,
+            lastName: true,
+          },
+        },
+
+        resolvedBy: {
+          select: {
+            firstName: true,
+            lastName: true,
+          },
+        },
+      },
+    });
+
+    if (!issue) {
+      throw new AppError({
+        statusCode: 404,
+        message: "Issue not found.",
+        code: "ISSUE_NOT_FOUND",
+      });
+    }
+
+    return issue;
+  },
+
+  async updateIssueStatus(input: UpdateIssueStatusInput) {
+    const { issueId, adminId, status } = input;
+
+    const issue = await prisma.issue.findUnique({
+      where: {
+        id: issueId,
+      },
+      select: {
+        id: true,
+        status: true,
+      },
+    });
+
+    if (!issue) {
+      throw new AppError({
+        statusCode: 404,
+        message: "Issue not found.",
+        code: "ISSUE_NOT_FOUND",
+      });
+    }
+
+    // Prevent changing an issue to the same status.
+    if (issue.status === status) {
+      throw new AppError({
+        statusCode: 400,
+        message: `Issue is already ${status}.`,
+        code: "ISSUE_STATUS_UNCHANGED",
+      });
+    }
+
+    // Enforce the issue lifecycle:
+    // OPEN → IN_PROGRESS → RESOLVED → CLOSED
+    const allowedNextStatus: Record<string, string> = {
+      OPEN: "IN_PROGRESS",
+      IN_PROGRESS: "RESOLVED",
+      RESOLVED: "CLOSED",
+    };
+
+    if (allowedNextStatus[issue.status] !== status) {
+      throw new AppError({
+        statusCode: 400,
+        message: `Issue status cannot change from ${issue.status} to ${status}.`,
+        code: "INVALID_ISSUE_STATUS_TRANSITION",
+      });
+    }
+
+    const updatedIssue = await prisma.issue.update({
+      where: {
+        id: issue.id,
+      },
+      data: {
+        status,
+        ...(status === "RESOLVED"
+          ? {
+              resolvedById: adminId,
+              resolvedAt: new Date(),
+            }
+          : {}),
+      },
+    });
+
+    return updatedIssue;
+  },
+
+  async adminDeleteIssue(input: AdminDeleteIssueInput) {
+    const { issueId } = input;
+
+    const issue = await prisma.issue.findUnique({
+      where: {
+        id: issueId,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!issue) {
+      throw new AppError({
+        statusCode: 404,
+        message: "Issue not found.",
+        code: "ISSUE_NOT_FOUND",
+      });
+    }
+
+    await prisma.issue.delete({
+      where: {
+        id: issue.id,
+      },
+    });
   },
 };

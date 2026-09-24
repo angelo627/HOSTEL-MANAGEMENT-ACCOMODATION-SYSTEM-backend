@@ -4405,5 +4405,370 @@ export const allApis = [
         },
       },
     },
+
+    {
+      method: "get",
+      path: "/api/admin/issues/{issueId}",
+      summary: "Get a single issue",
+      description:
+        "Allows an authenticated administrator to retrieve a specific reported issue together with related student, reporter, and resolver information.",
+      tags: ["ISSUE"],
+      security: [{ bearerAuth: [] }],
+
+      parameters: [
+        {
+          name: "issueId",
+          in: "path",
+          required: true,
+          schema: {
+            type: "string",
+          },
+          description: "The ID of the issue to retrieve.",
+          example: "a720b47e-039e-4057-91bb-0206dce0437e",
+        },
+      ],
+
+      responses: {
+        200: {
+          description: "Issue retrieved successfully.",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: true,
+                  },
+                  statusCode: {
+                    type: "integer",
+                    example: 200,
+                  },
+                  message: {
+                    type: "string",
+                    example: "Issue retrieved successfully.",
+                  },
+                  data: {
+                    type: "object",
+                    properties: {
+                      id: {
+                        type: "string",
+                        example: "a720b47e-039e-4057-91bb-0206dce0437e",
+                      },
+                      studentId: {
+                        type: "string",
+                        example: "e36c239c-c012-4a1f-90b7-b4e760f7b943",
+                      },
+                      reportedById: {
+                        type: "string",
+                        example: "de69090d-f52f-4f54-8667-bc21a14904ac",
+                      },
+                      resolvedById: {
+                        type: "string",
+                        nullable: true,
+                        example: null,
+                      },
+                      title: {
+                        type: "string",
+                        example: "Broken bathroom tap",
+                      },
+                      description: {
+                        type: "string",
+                        example:
+                          "The bathroom tap has been leaking for two days.",
+                      },
+                      status: {
+                        type: "string",
+                        example: "OPEN",
+                      },
+                      resolvedAt: {
+                        type: "string",
+                        format: "date-time",
+                        nullable: true,
+                        example: null,
+                      },
+                      createdAt: {
+                        type: "string",
+                        format: "date-time",
+                        example: "2026-09-24T06:31:55.512Z",
+                      },
+                      updatedAt: {
+                        type: "string",
+                        format: "date-time",
+                        example: "2026-09-24T06:31:55.512Z",
+                      },
+
+                      student: {
+                        type: "object",
+                        properties: {
+                          user: {
+                            type: "object",
+                            properties: {
+                              firstName: {
+                                type: "string",
+                                example: "Angelo",
+                              },
+                              lastName: {
+                                type: "string",
+                                example: "Flitz",
+                              },
+                            },
+                          },
+                        },
+                      },
+
+                      reportedBy: {
+                        type: "object",
+                        properties: {
+                          firstName: {
+                            type: "string",
+                            example: "Angelo",
+                          },
+                          lastName: {
+                            type: "string",
+                            example: "Flitz",
+                          },
+                        },
+                      },
+
+                      resolvedBy: {
+                        type: "object",
+                        nullable: true,
+                        properties: {
+                          firstName: {
+                            type: "string",
+                            example: "Admin",
+                          },
+                          lastName: {
+                            type: "string",
+                            example: "User",
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+
+        401: {
+          description: "Authentication required or token is invalid.",
+        },
+
+        403: {
+          description: "Administrator privileges are required.",
+        },
+
+        404: {
+          description: "Issue not found.",
+        },
+      },
+    },
+
+    {
+      method: "patch",
+      path: "/api/admin/issues/{issueId}/status",
+      summary: "Update issue status",
+      description:
+        "Allows an authenticated administrator to update the status of a reported issue. Issue statuses must follow the defined lifecycle: OPEN → IN_PROGRESS → RESOLVED → CLOSED. When an issue is marked as RESOLVED, the resolving administrator and resolution time are automatically recorded.",
+      tags: ["ISSUE"],
+      security: [{ bearerAuth: [] }],
+
+      parameters: [
+        {
+          name: "issueId",
+          in: "path",
+          required: true,
+          schema: {
+            type: "string",
+          },
+          description: "The ID of the issue to update.",
+          example: "a720b47e-039e-4057-91bb-0206dce0437e",
+        },
+      ],
+
+      requestBody: {
+        required: true,
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              required: ["status"],
+              properties: {
+                status: {
+                  type: "string",
+                  enum: ["OPEN", "IN_PROGRESS", "RESOLVED", "CLOSED"],
+                  example: "IN_PROGRESS",
+                  description: "The new status for the issue.",
+                },
+              },
+            },
+          },
+        },
+      },
+
+      responses: {
+        200: {
+          description: "Issue status updated successfully.",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: true,
+                  },
+                  statusCode: {
+                    type: "integer",
+                    example: 200,
+                  },
+                  message: {
+                    type: "string",
+                    example: "Issue status updated successfully.",
+                  },
+                  data: {
+                    type: "object",
+                    properties: {
+                      id: {
+                        type: "string",
+                        example: "a720b47e-039e-4057-91bb-0206dce0437e",
+                      },
+                      studentId: {
+                        type: "string",
+                        example: "e36c239c-c012-4a1f-90b7-b4e760f7b943",
+                      },
+                      reportedById: {
+                        type: "string",
+                        example: "de69090d-f52f-4f54-8667-bc21a14904ac",
+                      },
+                      resolvedById: {
+                        type: "string",
+                        nullable: true,
+                        example: null,
+                      },
+                      title: {
+                        type: "string",
+                        example: "Broken bathroom tap",
+                      },
+                      description: {
+                        type: "string",
+                        example:
+                          "The bathroom tap has been leaking for two days.",
+                      },
+                      status: {
+                        type: "string",
+                        example: "IN_PROGRESS",
+                      },
+                      resolvedAt: {
+                        type: "string",
+                        format: "date-time",
+                        nullable: true,
+                        example: null,
+                      },
+                      createdAt: {
+                        type: "string",
+                        format: "date-time",
+                        example: "2026-09-24T06:31:55.512Z",
+                      },
+                      updatedAt: {
+                        type: "string",
+                        format: "date-time",
+                        example: "2026-09-24T09:40:57.272Z",
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+
+        400: {
+          description:
+            "Invalid status transition or the requested status is the same as the current status.",
+        },
+
+        401: {
+          description: "Authentication required or token is invalid.",
+        },
+
+        403: {
+          description: "Administrator privileges are required.",
+        },
+
+        404: {
+          description: "Issue not found.",
+        },
+      },
+    },
+
+    {
+      method: "delete",
+      path: "/api/admin/issues/{issueId}",
+      summary: "Delete an issue",
+      description:
+        "Allows an authenticated administrator to permanently delete a reported issue regardless of its current status.",
+      tags: ["ISSUE"],
+      security: [{ bearerAuth: [] }],
+
+      parameters: [
+        {
+          name: "issueId",
+          in: "path",
+          required: true,
+          schema: {
+            type: "string",
+          },
+          description: "The ID of the issue to delete.",
+          example: "a720b47e-039e-4057-91bb-0206dce0437e",
+        },
+      ],
+
+      responses: {
+        200: {
+          description: "Issue deleted successfully.",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: true,
+                  },
+                  statusCode: {
+                    type: "integer",
+                    example: 200,
+                  },
+                  message: {
+                    type: "string",
+                    example: "Issue deleted successfully.",
+                  },
+                  data: {
+                    type: "null",
+                    example: null,
+                  },
+                },
+              },
+            },
+          },
+        },
+
+        401: {
+          description: "Authentication required or token is invalid.",
+        },
+
+        403: {
+          description: "Administrator privileges are required.",
+        },
+
+        404: {
+          description: "Issue not found.",
+        },
+      },
+    },
   ],
 ] as const;

@@ -11,3 +11,12 @@ export const createIssueSchema = z.object({
     .trim()
     .min(1, "Issue description is required."),
 });
+
+export const updateIssueStatusSchema = z.object({
+  status: z.enum([
+    "OPEN",
+    "IN_PROGRESS",
+    "RESOLVED",
+    "CLOSED",
+  ]),
+});
