@@ -4217,8 +4217,6 @@ export const allApis = [
       },
     },
 
-    
-
     {
       method: "delete",
       path: "/api/user/delete/issue/{issueId}",
@@ -4287,6 +4285,123 @@ export const allApis = [
         404: {
           description:
             "The issue or authenticated student's record was not found.",
+        },
+      },
+    },
+
+    {
+      method: "get",
+      path: "/api/admin/all/issues",
+      summary: "Get all reported issues",
+      description:
+        "Allows an authenticated administrator to retrieve all issues reported by students. Each issue includes the student's name.",
+      tags: ["ISSUE"],
+      security: [{ bearerAuth: [] }],
+
+      responses: {
+        200: {
+          description: "Issues retrieved successfully.",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: true,
+                  },
+                  statusCode: {
+                    type: "integer",
+                    example: 200,
+                  },
+                  message: {
+                    type: "string",
+                    example: "Issues retrieved successfully.",
+                  },
+                  data: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        id: {
+                          type: "string",
+                          example: "2474f814-0ac3-42e2-8cab-cad75b2282e3",
+                        },
+                        studentId: {
+                          type: "string",
+                          example: "e36c239c-c012-4a1f-90b7-b4e760f7b943",
+                        },
+                        reportedById: {
+                          type: "string",
+                          example: "de69090d-f52f-4f54-8667-bc21a14904ac",
+                        },
+                        resolvedById: {
+                          type: "string",
+                          nullable: true,
+                          example: null,
+                        },
+                        title: {
+                          type: "string",
+                          example: "Broken bathroom tap",
+                        },
+                        description: {
+                          type: "string",
+                          example:
+                            "The bathroom tap has been leaking for two days.",
+                        },
+                        status: {
+                          type: "string",
+                          example: "OPEN",
+                        },
+                        resolvedAt: {
+                          type: "string",
+                          format: "date-time",
+                          nullable: true,
+                          example: null,
+                        },
+                        createdAt: {
+                          type: "string",
+                          format: "date-time",
+                          example: "2026-09-23T02:50:38.392Z",
+                        },
+                        updatedAt: {
+                          type: "string",
+                          format: "date-time",
+                          example: "2026-09-23T02:50:38.392Z",
+                        },
+                        student: {
+                          type: "object",
+                          properties: {
+                            user: {
+                              type: "object",
+                              properties: {
+                                firstName: {
+                                  type: "string",
+                                  example: "John",
+                                },
+                                lastName: {
+                                  type: "string",
+                                  example: "Doe",
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+
+        401: {
+          description: "Authentication required or token is invalid.",
+        },
+
+        403: {
+          description: "Administrator privileges are required.",
         },
       },
     },

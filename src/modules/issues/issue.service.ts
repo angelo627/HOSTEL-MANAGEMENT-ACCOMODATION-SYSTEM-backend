@@ -126,4 +126,26 @@ export const issueService = {
       where: { id: issue.id },
     });
   },
+
+  async getAdminIssues() {
+    const issues = await prisma.issue.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+      include: {
+        student: {
+          select: {
+            user: {
+              select: {
+                firstName: true,
+                lastName: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return issues;
+  },
 };

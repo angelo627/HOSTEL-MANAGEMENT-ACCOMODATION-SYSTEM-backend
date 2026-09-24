@@ -44,4 +44,14 @@ export const issueController = {
       data: null,
     });
   }),
+
+  getAdminIssues: asyncHandler(async (_req: Request, res: Response) => {
+    const issues = await issueService.getAdminIssues();
+
+    sendSuccess(res, {
+      statusCode: 200,
+      message: "Issues retrieved successfully.",
+      data: issues,
+    });
+  }),
 };

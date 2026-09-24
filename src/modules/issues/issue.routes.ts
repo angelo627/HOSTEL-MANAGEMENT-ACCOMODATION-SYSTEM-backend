@@ -4,6 +4,7 @@ import { validateRequest } from "../../shared/validation/validate-request";
 import { createIssueSchema } from "./issue.validation";
 
 const issueRouter = Router();
+const adminissueRouter = Router();
 
 issueRouter.post(
   "/create/issues",
@@ -21,4 +22,10 @@ issueRouter.delete(
   issueController.deleteIssue,
 );
 
+adminissueRouter.get(
+   "/all/issues",
+   issueController.getAdminIssues,
+);
+
 export { issueRouter };
+export { adminissueRouter };
