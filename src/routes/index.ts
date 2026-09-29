@@ -16,6 +16,7 @@ import { allocationRouter } from "../modules/allocations/allocation.routes";
 import { paymentRouter } from "../modules/payments/payment.routes";
 import { checkInRouter } from "../modules/check-ins/checkin.routes";
 import { issueRouter, adminissueRouter } from "../modules/issues/issue.routes";
+import { schoolFeeRecordRouter } from "../modules/schoolFeeReceipt/schoolFeeRecord.routes";
 
 const apiRouter = Router();
 const adminRouter = Router();
@@ -53,6 +54,7 @@ adminRouter.use("/admin", bedRouter);
 adminRouter.use("/admin", adminbankAccountRouter)
 adminRouter.use("/admin", checkInRouter);
 adminRouter.use("/admin", adminissueRouter);
+adminRouter.use("/admin", schoolFeeRecordRouter);
 
 
 

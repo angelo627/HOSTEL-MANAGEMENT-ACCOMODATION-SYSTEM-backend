@@ -4771,4 +4771,129 @@ export const allApis = [
       },
     },
   ],
+
+  [
+    {
+      method: "get",
+      path: "/api/admin/all/school-fee-records",
+      summary: "Get all school fee records",
+      description:
+        "Retrieves all student school fee records, including the student's registration number, academic level, gender, first name, and last name.",
+      tags: ["SCHOOL FEE RECORD"],
+      security: [{ bearerAuth: [] }],
+      responses: {
+        200: {
+          description: "School fee records retrieved successfully.",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: true,
+                  },
+                  statusCode: {
+                    type: "integer",
+                    example: 200,
+                  },
+                  message: {
+                    type: "string",
+                    example: "School fee records retrieved successfully.",
+                  },
+                  data: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        id: {
+                          type: "string",
+                          format: "uuid",
+                          example: "6edba77b-2446-4a36-a95f-75b823c3169c",
+                        },
+                        studentId: {
+                          type: "string",
+                          format: "uuid",
+                          example: "db70e77b-3285-486d-9a3d-e3f234e76da8",
+                        },
+                        rrr: {
+                          type: "string",
+                          nullable: true,
+                          example: "RRR-2023-449638",
+                        },
+                        status: {
+                          type: "string",
+                          enum: ["PAID", "NOT_PAID"],
+                          example: "PAID",
+                        },
+                        verifiedAt: {
+                          type: "string",
+                          format: "date-time",
+                          nullable: true,
+                          example: "2026-09-01T16:37:12.391Z",
+                        },
+                        createdAt: {
+                          type: "string",
+                          format: "date-time",
+                          example: "2026-09-01T16:37:12.392Z",
+                        },
+                        updatedAt: {
+                          type: "string",
+                          format: "date-time",
+                          example: "2026-09-01T16:37:12.392Z",
+                        },
+                        student: {
+                          type: "object",
+                          properties: {
+                            registrationNo: {
+                              type: "string",
+                              example: "2026/377896",
+                            },
+                            academicLevel: {
+                              type: "string",
+                              enum: [
+                                "LEVEL_100",
+                                "LEVEL_200",
+                                "LEVEL_300",
+                                "LEVEL_400",
+                                "LEVEL_500",
+                                "LEVEL_600",
+                              ],
+                              example: "LEVEL_400",
+                            },
+                            gender: {
+                              type: "string",
+                              nullable: true,
+                              enum: ["MALE", "FEMALE"],
+                              example: "MALE",
+                            },
+                            user: {
+                              type: "object",
+                              properties: {
+                                firstName: {
+                                  type: "string",
+                                  example: "Miracle",
+                                },
+                                lastName: {
+                                  type: "string",
+                                  example: "Chukwuemeka",
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        403: {
+          description: "Forbidden - Admin access required.",
+        },
+      },
+    },
+  ],
 ] as const;
