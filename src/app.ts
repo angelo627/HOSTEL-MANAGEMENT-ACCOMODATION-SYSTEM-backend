@@ -12,7 +12,7 @@ import { swaggerSpec } from "./config/swagger";
 
 const app = express();
 
-// Global middleware
+// Global middlewares
 app.use(
   cors({
     origin: env.corsOrigin,
@@ -25,7 +25,7 @@ app.use(express.urlencoded({ extended: true }));
 app.disable("x-powered-by");
 
 
-// Health check
+// Health check for the system
 app.get("/health", (_req, res) => {
   return sendSuccess(res, {
     message: "Hostel Management Backend is running.",
