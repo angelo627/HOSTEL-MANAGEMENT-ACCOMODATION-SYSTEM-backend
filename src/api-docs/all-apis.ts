@@ -343,7 +343,7 @@ export const allApis = [
       },
     },
     {
-      path: "/api/user/{hostelId}",
+      path: "/api/user/{hostelId}/student",
       method: "get",
       summary: "Get a hostel by ID",
       tags: ["Hostel"],

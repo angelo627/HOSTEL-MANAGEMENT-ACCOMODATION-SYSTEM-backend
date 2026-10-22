@@ -37,7 +37,7 @@ hostelRouter.get(
 
 // Retrieve one hostel using its unique ID.
 userhostelRouter.get(
-  "/:hostelId",
+  "/:hostelId/student",
   hostelController.getHostelById,
 );
 
