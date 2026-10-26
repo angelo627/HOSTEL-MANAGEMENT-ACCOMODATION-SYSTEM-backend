@@ -3200,7 +3200,7 @@ export const allApis = [
   [
     {
       method: "post",
-      path: "/api/user/allocation",
+      path: "/api/user/process-hostel/allocation",
       summary: "Reserve a bed",
       description:
         "Allows an authenticated student with an eligible hostel application to reserve an available bed in the selected hostel. Allocation follows FCFS scheduling, and the system automatically selects the available room and bed. The reservation remains valid for 48 hours.",
