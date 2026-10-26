@@ -10,7 +10,7 @@ const hostelApplicationRouter = Router();
 // Allow an authenticated student to apply for a specific hostel.
 // The student chooses the hostel, while room and bed selection are handled later by allocation.
 hostelApplicationRouter.post(
-  "/applyhostel-application",
+  "/hostel-application",
   validateRequest(createHostelApplicationSchema),
   hostelApplicationController.createApplication,
 );
