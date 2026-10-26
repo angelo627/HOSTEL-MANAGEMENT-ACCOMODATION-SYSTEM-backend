@@ -14,7 +14,7 @@ export const createRoomSchema = z.object({
     .number()
     .int("Room capacity must be a whole number.")
     .min(1, "Room capacity must be at least 1.")
-    .max(4, "Room capacity cannot exceed 4."),
+    .max(6, "Room capacity cannot exceed 6."), //changed this from 4 to 6
 });
 
 // Validate the information supplied when updating an existing room.
@@ -32,6 +32,7 @@ export const updateRoomSchema = z
       .number()
       .int("Room capacity must be a whole number.")
       .min(1, "Room capacity must be at least 1.")
+      .max(6, "Room capacity cannot exceed 6.") // i added this line, if there is any problem i will remove it.
       .optional(),
   })
   .refine(
