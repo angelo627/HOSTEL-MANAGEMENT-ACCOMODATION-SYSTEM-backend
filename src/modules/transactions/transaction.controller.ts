@@ -18,4 +18,15 @@ export const transactionController = {
       data: transactions,
     });
   }),
+
+  // Retrieve all transactions across every bank account for admin reporting.
+  getAllTransactions: asyncHandler(async (_req: Request, res: Response) => {
+    const transactions = await transactionService.getAllTransactions();
+
+    sendSuccess(res, {
+      statusCode: 200,
+      message: "All transactions retrieved successfully.",
+      data: transactions,
+    });
+  }),
 };

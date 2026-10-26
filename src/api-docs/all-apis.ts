@@ -2741,6 +2741,192 @@ export const allApis = [
         },
       },
     },
+
+    {
+      method: "get",
+      path: "/api/admin/all/transactions",
+      summary: "Get all transactions",
+      description:
+        "Retrieves all transactions across every bank account, ordered from newest to oldest, including associated bank account and user details. Accessible to ADMIN and SUPERADMIN roles only.",
+      tags: ["TRANSACTION"],
+      security: [{ bearerAuth: [] }],
+      responses: {
+        200: {
+          description: "All transactions retrieved successfully.",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: true,
+                  },
+                  statusCode: {
+                    type: "integer",
+                    example: 200,
+                  },
+                  message: {
+                    type: "string",
+                    example: "All transactions retrieved successfully.",
+                  },
+                  data: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        id: {
+                          type: "string",
+                          format: "uuid",
+                          example: "transaction-uuid",
+                        },
+                        bankAccountId: {
+                          type: "string",
+                          format: "uuid",
+                          example: "bank-account-uuid",
+                        },
+                        reference: {
+                          type: "string",
+                          example: "FUND-1792969292535-587983",
+                        },
+                        amount: {
+                          type: "string",
+                          example: "100000",
+                        },
+                        type: {
+                          type: "string",
+                          enum: ["CREDIT", "DEBIT"],
+                          example: "CREDIT",
+                        },
+                        description: {
+                          type: "string",
+                          nullable: true,
+                          example: "Bank account funded by administrator.",
+                        },
+                        createdAt: {
+                          type: "string",
+                          format: "date-time",
+                          example: "2026-10-25T23:01:32.864Z",
+                        },
+                        bankAccount: {
+                          type: "object",
+                          properties: {
+                            accountNumber: {
+                              type: "string",
+                              example: "123456789012",
+                            },
+                            type: {
+                              type: "string",
+                              enum: ["STUDENT", "ADMIN"],
+                              example: "STUDENT",
+                            },
+                            user: {
+                              type: "object",
+                              nullable: true,
+                              properties: {
+                                firstName: {
+                                  type: "string",
+                                  example: "Angelo",
+                                },
+                                lastName: {
+                                  type: "string",
+                                  example: "Flitz",
+                                },
+                                email: {
+                                  type: "string",
+                                  nullable: true,
+                                  example: "angelo@example.com",
+                                },
+                                student: {
+                                  type: "object",
+                                  nullable: true,
+                                  properties: {
+                                    registrationNo: {
+                                      type: "string",
+                                      example: "2024/685993",
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        401: {
+          description: "Authentication required.",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: false,
+                  },
+                  statusCode: {
+                    type: "integer",
+                    example: 401,
+                  },
+                  message: {
+                    type: "string",
+                    example: "Authentication required.",
+                  },
+                  data: {
+                    type: "null",
+                    example: null,
+                  },
+                  code: {
+                    type: "string",
+                    example: "UNAUTHORIZED",
+                  },
+                },
+              },
+            },
+          },
+        },
+        403: {
+          description:
+            "The authenticated user does not have permission to access this endpoint.",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  success: {
+                    type: "boolean",
+                    example: false,
+                  },
+                  statusCode: {
+                    type: "integer",
+                    example: 403,
+                  },
+                  message: {
+                    type: "string",
+                    example:
+                      "You do not have permission to perform this action.",
+                  },
+                  data: {
+                    type: "null",
+                    example: null,
+                  },
+                  code: {
+                    type: "string",
+                    example: "FORBIDDEN",
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
   ],
 
   [

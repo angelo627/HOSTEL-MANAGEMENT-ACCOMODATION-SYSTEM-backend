@@ -9,7 +9,10 @@ import { userRoomRouter } from "../modules/room/room.routes";
 import { bedRouter, userBedRouter } from "../modules/bed/bed.routes";
 import { studentRouter } from "../modules/student/student.routes";
 import { bankAccountRouter } from "../modules/bankAccount/bank.routes";
-import { transactionRouter } from "../modules/transactions/transaction.routes";
+import {
+  transactionRouter,
+  adminTransactionRouter,
+} from "../modules/transactions/transaction.routes";
 import { adminbankAccountRouter } from "../modules/bankAccount/bank.routes";
 import { hostelApplicationRouter } from "../modules/HostelApplication/hostelApplication.routes";
 import { allocationRouter } from "../modules/allocations/allocation.routes";
@@ -55,6 +58,7 @@ adminRouter.use("/admin", adminbankAccountRouter)
 adminRouter.use("/admin", checkInRouter);
 adminRouter.use("/admin", adminissueRouter);
 adminRouter.use("/admin", schoolFeeRecordRouter);
+adminRouter.use("/admin", adminTransactionRouter);
 
 
 

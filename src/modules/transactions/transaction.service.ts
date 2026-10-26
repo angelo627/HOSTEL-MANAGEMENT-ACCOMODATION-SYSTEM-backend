@@ -29,4 +29,35 @@ export const transactionService = {
 
     return transactions;
   },
+
+  // Retrieve all transactions across every bank account for admin reporting.
+  async getAllTransactions() {
+    const transactions = await prisma.transaction.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+      include: {
+        bankAccount: {
+          select: {
+            accountNumber: true,
+            type: true,
+            user: {
+              select: {
+                firstName: true,
+                lastName: true,
+                email: true,
+                student: {
+                  select: {
+                    registrationNo: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return transactions;
+  },
 };
